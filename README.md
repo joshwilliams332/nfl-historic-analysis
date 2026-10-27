@@ -2,7 +2,8 @@
 
 Every week, fantasy football managers choose between players using recent form, matchups, and Vegas lines.
 This project tests those instincts against **27 NFL seasons (1999-2025, 144,000 player-games)**: how the game
-changed, what never did, and a projection model scored on a season it never saw.
+changed, what never did, a projection model scored on seasons it never saw, a season-long model for drafts, and
+**live projections for the 2026 season** ([this week's](reports/projections/2026_week08.md)).
 
 **Python · pandas · scikit-learn · matplotlib · Jupyter** · data from [nflverse](https://github.com/nflverse/nflverse-data)
 
@@ -109,6 +110,48 @@ off steeply after 26. Receivers and tight ends peak around 25-26 and decline mor
 Five times the data, the same accuracy. The ceiling is the noise in a single game, not a shortage of examples.
 Better *information* (injuries, snap counts, depth charts) is what would move it.
 
+## Better information: snap counts and injury reports
+
+![Injury tags vs. scoring](reports/figures/12_injury_tags.png)
+
+Players who suit up with an injury tag score less than usual: 11% below a typical week when listed questionable, 15%
+when they missed practice. But only about 6% of player-games carry a tag, so adding the report barely moves overall
+accuracy.
+
+![Bootstrap of model improvements](reports/figures/13_snaps_injuries_bootstrap.png)
+
+**Snap share** (fraction of offensive plays in earlier games) is a small but real gain. On 2025 it saves 0.06 points
+of MAE, with a 95% interval of +0.03 to +0.10 from a bootstrap over weeks, and lifts start/sit accuracy from 65.5% to
+66.1%. The live model uses both.
+
+## Season-long projections (draft prep)
+
+![Season model vs. baselines](reports/figures/14_season_model.png)
+
+Next season's PPR per game from this season: production, the season before, volume, touchdowns, snap share, and a
+separate age curve per position. Predicting 2024 and 2025, it cuts the error of "same as last season" from 3.26 to
+2.84 points per game and orders players within a position better (rank correlation 0.61 → 0.68).
+
+![2026 preseason projections vs. 2026 so far](reports/figures/15_season_2026_check.png)
+
+The honest 2026 check, seven weeks in: on raw error the model is slightly *behind* "same as 2025" (3.29 vs. 3.23),
+because 2026 is the highest-scoring season in the sample and players have declined less than usual. The ordering
+holds up: the third the model expected to fall most is down 0.9 PPG, and the third it expected to rise is up 0.9.
+
+## Live: the 2026 season
+
+![2026 backtest by week](reports/figures/16_2026_backtest.png)
+
+Trained only on 2021-2025, the weekly model beat the season average in every week of 2026 so far: 65.8% of start/sit
+calls right vs. 62.3%, and a 5.68-point average miss vs. 6.20.
+
+**[Week 8 projections →](reports/projections/2026_week08.md)** (also as [CSV](reports/projections/2026_week08.csv))
+
+![Week 8: model vs. season average](reports/figures/17_week8_gaps.png)
+
+Every week: `python scripts/project_week.py` projects the next unplayed week. Run it again after Friday's injury
+reports to include the tags.
+
 ## Method
 
 * **No look-ahead.** Every feature for week *t* uses only games before *t*: rolling stats are shifted one game,
@@ -126,7 +169,9 @@ Better *information* (injuries, snap counts, depth charts) is what would move it
 
 * Only players who played appear in the data, so injuries and surprise inactives (a big part of real start/sit
   risk) aren't modeled.
-* No snap counts, routes, depth charts, or injury news, all of which a real projection would use.
+* Snap counts and injury reports are in; routes, depth charts, and news are not.
+* The season model predicts points per game *if a player plays*: about 15% of qualifying players don't get 4+ games
+  the next season, and it doesn't see offseason moves or project rookies.
 * Defense-vs-position numbers depend on which players a defense happened to face; an opponent-adjusted version
   would likely make the matchup effect a bit stronger.
 * Scoring is full PPR; results for half-PPR and standard should be similar but weren't tested.
@@ -137,7 +182,8 @@ Better *information* (injuries, snap counts, depth charts) is what would move it
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 pytest                      # feature leakage tests
-jupyter lab notebooks/      # run 01 -> 04 in order; ~210 MB of nflverse data downloads to data/raw on first run
+jupyter lab notebooks/      # run 01 -> 07 in order; ~250 MB of nflverse data downloads to data/raw on first run
+python scripts/project_week.py   # projections for the next unplayed week
 ```
 
 ## Layout
@@ -148,11 +194,19 @@ notebooks/
   02_what_is_predictable.ipynb   reliability, recent-form windows, matchup and Vegas effects
   03_projection_model.ipynb      baselines vs. ridge vs. gradient boosting, start/sit evaluation
   04_history.ipynb               1999-2025: position shares, workhorse RBs, era checks, TD regression, aging, training window
+  05_snaps_and_injuries.ipynb    snap share and injury reports as features, bootstrap confidence intervals
+  06_season_projections.ipynb    season-long model for drafts, 2026 preseason projections vs. 2026 so far
+  07_live_2026_week8.ipynb       2026 backtest and week 8 projections
+scripts/
+  project_week.py  rerunnable weekly projections -> reports/projections/
 src/fantasy/
-  data.py        download + cache nflverse player weeks, schedules (with Vegas lines), birth dates
-  features.py    leakage-safe features, model sample, the Mingus heuristic
+  data.py        download + cache nflverse player weeks, schedules (Vegas lines), snap counts, injuries, birth dates
+  features.py    leakage-safe features (incl. snaps, injury tags, upcoming-week rows), the Mingus heuristic
+  weekly.py      the weekly projection model: build, fit, project a week
+  season.py      season-long projection model
   evaluate.py    MAE / start/sit accuracy scoring
   plots.py       shared chart style (colorblind-checked palette)
 tests/           unit tests for the no-look-ahead guarantees
 reports/figures/ charts used above
+reports/projections/ weekly projection tables
 ```

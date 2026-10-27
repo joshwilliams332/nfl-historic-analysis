@@ -1,6 +1,7 @@
-"""Download and cache nflverse weekly player stats and the game schedule (with Vegas lines)."""
+"""Download and cache nflverse data: weekly player stats, schedules with Vegas lines, snap counts, injury reports."""
 from __future__ import annotations
 
+import time
 from pathlib import Path
 from urllib.request import urlretrieve
 
@@ -10,7 +11,10 @@ import pandas as pd
 BASE = "https://github.com/nflverse/nflverse-data/releases/download"
 RAW = Path(__file__).resolve().parents[2] / "data" / "raw"
 SEASONS = range(2021, 2026)        # recent window used for the projection model
-ALL_SEASONS = range(1999, 2026)    # everything nflverse has weekly player stats for
+ALL_SEASONS = range(1999, 2026)    # every complete season nflverse has weekly player stats for
+CURRENT_SEASON = 2026              # in progress; its files are re-downloaded when stale
+SNAP_SEASONS = range(2012, 2027)   # snap counts start in 2012
+STALE_HOURS = 6
 POSITIONS = ["QB", "RB", "WR", "TE"]
 # nflverse has receptions but (almost) no targets for these seasons; treat targets as unknown, not zero.
 NO_TARGETS = range(2003, 2009)
@@ -29,9 +33,12 @@ PLAYER_COLS = [
 
 
 def _fetch(path: str) -> Path:
-    """Download a file from the nflverse release once, then reuse the local copy."""
+    """Download a file from the nflverse release once, then reuse the local copy.
+    Files that still change (the schedule, anything for the current season) are refreshed when stale."""
     dest = RAW / Path(path).name
-    if not dest.exists():
+    live = "games.csv" in path or str(CURRENT_SEASON) in path
+    stale = dest.exists() and live and time.time() - dest.stat().st_mtime > STALE_HOURS * 3600
+    if not dest.exists() or stale:
         RAW.mkdir(parents=True, exist_ok=True)
         urlretrieve(f"{BASE}/{path}", dest)
     return dest
@@ -84,3 +91,35 @@ def load_birth_dates() -> pd.DataFrame:
     p = p.dropna().rename(columns={"gsis_id": "player_id"})
     p["birth_date"] = pd.to_datetime(p.birth_date, errors="coerce")
     return p.dropna().drop_duplicates("player_id")
+
+
+def load_snap_counts(seasons=SNAP_SEASONS) -> pd.DataFrame:
+    """Share of offensive snaps per player-week (2012+), keyed by gsis player id like the stats."""
+    ids = pd.read_csv(_fetch("players/players.csv"), usecols=["gsis_id", "pfr_id"], low_memory=False).dropna()
+    ids = ids.drop_duplicates("pfr_id")
+    frames = [pd.read_csv(_fetch(f"snap_counts/snap_counts_{s}.csv"),
+                          usecols=["season", "game_type", "week", "pfr_player_id", "offense_pct"])
+              for s in seasons]
+    snaps = pd.concat(frames, ignore_index=True)
+    snaps = snaps[snaps.game_type == "REG"].merge(ids, left_on="pfr_player_id", right_on="pfr_id")
+    snaps = snaps.rename(columns={"gsis_id": "player_id", "offense_pct": "snap_pct"})
+    return snaps[["player_id", "season", "week", "snap_pct"]].drop_duplicates(["player_id", "season", "week"])
+
+
+def load_injuries(seasons) -> pd.DataFrame:
+    """The final pre-game injury report per player-week: game status and last practice participation."""
+    frames = []
+    for s in seasons:
+        try:
+            frames.append(pd.read_csv(_fetch(f"injuries/injuries_{s}.csv"), low_memory=False))
+        except Exception:  # a season with no reports published yet
+            continue
+    inj = pd.concat(frames, ignore_index=True)
+    inj = inj[inj.game_type == "REG"].sort_values("date_modified")
+    inj = inj.drop_duplicates(["gsis_id", "season", "week"], keep="last")
+    out = pd.DataFrame({"player_id": inj.gsis_id, "season": inj.season, "week": inj.week})
+    out["questionable"] = (inj.report_status == "Questionable").astype(int).values
+    out["doubtful"] = (inj.report_status == "Doubtful").astype(int).values
+    out["practice_dnp"] = inj.practice_status.str.startswith("Did Not", na=False).astype(int).values
+    out["practice_limited"] = inj.practice_status.str.startswith("Limited", na=False).astype(int).values
+    return out
