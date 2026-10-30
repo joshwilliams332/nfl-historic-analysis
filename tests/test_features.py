@@ -72,3 +72,14 @@ def test_upcoming_rows_skip_byes_and_absent_players():
     up = upcoming_rows(players, games, 2024, 4)
     assert up.player_id.tolist() == ["a1"]
     assert up.iloc[0].opponent_team == "C"
+
+
+def test_upcoming_rows_skip_teams_that_already_played():
+    from fantasy.features import upcoming_rows
+    players, _ = _toy()
+    week4 = players[players.week == 3].assign(week=4)
+    week4 = week4[week4.team == "A"]  # team A's week-4 game (Thursday) is already in the data
+    players = pd.concat([players, week4], ignore_index=True)
+    games = pd.DataFrame({"season": 2024, "week": 4, "team": ["A", "D"], "opponent_team": ["C", "B"]})
+    up = upcoming_rows(players, games, 2024, 4)
+    assert up.player_id.tolist() == ["d1"]

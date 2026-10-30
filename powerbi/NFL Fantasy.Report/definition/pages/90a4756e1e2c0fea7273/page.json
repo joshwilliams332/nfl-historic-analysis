@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.4.0/schema.json",
+  "name": "90a4756e1e2c0fea7273",
+  "displayName": "Find Similar Players",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280
+}

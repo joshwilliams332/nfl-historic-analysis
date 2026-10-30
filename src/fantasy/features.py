@@ -15,7 +15,7 @@ FEATURES = [
     "opps_per_game", "targets_per_game", "carries_per_game", "target_share_avg",
     "tds_per_game", "def_factor", "implied_total", "implied_factor", "spread", "home",
 ]
-# Share of offensive snaps in earlier games (2012+).
+# Share of offensive snaps in earlier games (2013+).
 SNAP_FEATURES = ["snap_last", "snap_last3", "snap_avg"]
 # This week's final injury report, published before kickoff (no report = all zeros).
 INJURY_FEATURES = ["questionable", "doubtful", "practice_dnp", "practice_limited"]
@@ -101,12 +101,14 @@ def upcoming_rows(players: pd.DataFrame, games: pd.DataFrame, season: int, week:
     """Placeholder rows for a week not yet played, so ``build_features`` can project it.
 
     Includes each player who appeared in their team's most recent game this season and whose team plays
-    in ``week``. Stats are left empty; the shifted features only look at earlier weeks anyway."""
+    in ``week`` but hasn't played it yet (a Thursday game already in the data is skipped). Stats are left
+    empty; the shifted features only look at earlier weeks anyway."""
+    played = set(players[(players.season == season) & (players.week == week)].team)
     cur = players[(players.season == season) & (players.week < week)]
     last_team_week = cur.groupby("team").week.max()
     latest = cur.sort_values("week").drop_duplicates("player_id", keep="last")
     latest = latest[latest.week == latest.team.map(last_team_week)]
-    sched = games[(games.season == season) & (games.week == week)][["team", "opponent_team"]]
+    sched = games[(games.season == season) & (games.week == week) & ~games.team.isin(played)][["team", "opponent_team"]]
     rows = latest[["player_id", "player_display_name", "position", "team"]].merge(sched, on="team")
     return rows.assign(season=season, week=week)
 

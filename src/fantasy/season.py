@@ -19,7 +19,7 @@ SEASON_FEATURES = ["ppg", "ppg_prev", "has_prev"] + VOLUME + AGE
 def season_table(seasons) -> pd.DataFrame:
     """One row per player-season: per-game production, volume, snap share, and age on Sept. 1."""
     seasons = list(seasons)
-    p = load_player_weeks(seasons).merge(load_snap_counts([s for s in seasons if s >= 2012]),
+    p = load_player_weeks(seasons).merge(load_snap_counts([s for s in seasons if s >= 2013]),
                                          on=["player_id", "season", "week"], how="left")
     st = p.groupby(["player_id", "season"]).agg(
         name=("player_display_name", "last"), position=("position", "last"), team=("team", "last"),
@@ -43,6 +43,8 @@ def season_pairs(st: pd.DataFrame, min_games: int = 6, min_ppg: float = 5.0) -> 
     d = d[(d.games >= min_games) & (d.ppg >= min_ppg)].copy()
     d["has_prev"] = d.ppg_prev.notna().astype(int)
     d["ppg_prev"] = d.ppg_prev.fillna(d.ppg)
+    # No snap counts before 2013: use the position's typical snap share rather than zero.
+    d["snap_pct"] = d.snap_pct.fillna(d.groupby("position").snap_pct.transform("median"))
     age = d.age.fillna(d.age.median()) - 27
     for pos in POSITIONS:
         is_pos = (d.position == pos).astype(float)

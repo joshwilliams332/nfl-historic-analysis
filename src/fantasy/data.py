@@ -13,7 +13,7 @@ RAW = Path(__file__).resolve().parents[2] / "data" / "raw"
 SEASONS = range(2021, 2026)        # recent window used for the projection model
 ALL_SEASONS = range(1999, 2026)    # every complete season nflverse has weekly player stats for
 CURRENT_SEASON = 2026              # in progress; its files are re-downloaded when stale
-SNAP_SEASONS = range(2012, 2027)   # snap counts start in 2012
+SNAP_SEASONS = range(2013, 2027)   # snap counts start in 2013 (nflverse's 2012 file is empty)
 STALE_HOURS = 6
 POSITIONS = ["QB", "RB", "WR", "TE"]
 # nflverse has receptions but (almost) no targets for these seasons; treat targets as unknown, not zero.
@@ -94,7 +94,7 @@ def load_birth_dates() -> pd.DataFrame:
 
 
 def load_snap_counts(seasons=SNAP_SEASONS) -> pd.DataFrame:
-    """Share of offensive snaps per player-week (2012+), keyed by gsis player id like the stats."""
+    """Share of offensive snaps per player-week (2013+), keyed by gsis player id like the stats."""
     ids = pd.read_csv(_fetch("players/players.csv"), usecols=["gsis_id", "pfr_id"], low_memory=False).dropna()
     ids = ids.drop_duplicates("pfr_id")
     frames = [pd.read_csv(_fetch(f"snap_counts/snap_counts_{s}.csv"),

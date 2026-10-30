@@ -1,0 +1,89 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "e0b9cc047b6268f6f2d4",
+  "position": {
+    "x": 24,
+    "y": 380,
+    "z": 6000,
+    "height": 96,
+    "width": 260,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "card",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Backtest 2026"
+                    }
+                  },
+                  "Property": "Season Avg Start/Sit"
+                }
+              },
+              "queryRef": "Backtest 2026.Season Avg Start/Sit",
+              "nativeQueryRef": "Season Avg Start/Sit",
+              "displayName": "Season average"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "labels": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "'26'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryLabels": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2026 start/sit accuracy: season average'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

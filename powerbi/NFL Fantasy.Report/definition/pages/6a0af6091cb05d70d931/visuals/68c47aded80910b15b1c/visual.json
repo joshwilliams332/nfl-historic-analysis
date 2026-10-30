@@ -1,0 +1,81 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "68c47aded80910b15b1c",
+  "position": {
+    "x": 786.0,
+    "y": 96,
+    "z": 7000,
+    "height": 300,
+    "width": 470.0,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Seasons"
+                    }
+                  },
+                  "Property": "season"
+                }
+              },
+              "queryRef": "Seasons.season",
+              "nativeQueryRef": "season",
+              "displayName": "Season",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "300-Carry RBs"
+                }
+              },
+              "queryRef": "Player Seasons.300-Carry RBs",
+              "nativeQueryRef": "300-Carry RBs",
+              "displayName": "RBs"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Running backs with 300+ carries'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "dca364afda29b25ad7a8",
+  "position": {
+    "x": 24,
+    "y": 168,
+    "z": 4000,
+    "height": 100,
+    "width": 260,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "slicer",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "age_years"
+                }
+              },
+              "queryRef": "Player Seasons.age_years",
+              "nativeQueryRef": "Age (years)",
+              "displayName": "Age (that season)",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Between'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Age (that season)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -26,7 +26,7 @@ def weekly_frame(seasons, upcoming: tuple[int, int] | None = None) -> pd.DataFra
         players = pd.concat([players, upcoming_rows(players, games, *upcoming)], ignore_index=True)
         players = players.sort_values(["player_id", "season", "week"]).reset_index(drop=True)
     df = build_features(players, games)
-    df = add_snap_features(df, load_snap_counts([s for s in seasons if s >= 2012]))
+    df = add_snap_features(df, load_snap_counts([s for s in seasons if s >= 2013]))
     return add_injury_features(df, load_injuries(seasons))
 
 

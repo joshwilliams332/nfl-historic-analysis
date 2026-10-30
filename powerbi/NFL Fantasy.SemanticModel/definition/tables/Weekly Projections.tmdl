@@ -1,0 +1,147 @@
+table 'Weekly Projections'
+	lineageTag: 2e57a667-5cb4-5180-9c84-bffd53660618
+
+	column season
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: b8182496-3f78-597a-a3ba-45134ac7819a
+		summarizeBy: none
+		sourceColumn: season
+
+		annotation SummarizationSetBy = User
+
+	column week
+		dataType: int64
+		formatString: 0
+		lineageTag: 9ed5d8cb-1b76-5096-b55d-79e6b9dc15f6
+		summarizeBy: none
+		sourceColumn: week
+
+		annotation SummarizationSetBy = User
+
+	column position
+		dataType: string
+		isHidden
+		lineageTag: 18320698-2fdc-5685-a942-fdd1957058c0
+		summarizeBy: none
+		sourceColumn: position
+
+		annotation SummarizationSetBy = User
+
+	column pos_rank
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a9d951d-d427-5a93-9f02-49a37f44f1a6
+		summarizeBy: none
+		sourceColumn: pos_rank
+
+		annotation SummarizationSetBy = User
+
+	column player
+		dataType: string
+		lineageTag: 971d7f24-1f99-5354-ab74-b629aed76673
+		summarizeBy: none
+		sourceColumn: player
+
+		annotation SummarizationSetBy = User
+
+	column team
+		dataType: string
+		lineageTag: 501ce1a2-0305-528f-a38c-dccf38154d9d
+		summarizeBy: none
+		sourceColumn: team
+
+		annotation SummarizationSetBy = User
+
+	column opponent
+		dataType: string
+		lineageTag: e4b0b7f0-823b-5c1d-b83b-eda938a3558f
+		summarizeBy: none
+		sourceColumn: opponent
+
+		annotation SummarizationSetBy = User
+
+	column projection
+		dataType: double
+		formatString: 0.0
+		lineageTag: 30fcdfca-fed0-5ff8-8e98-f7dcaba47e28
+		summarizeBy: none
+		sourceColumn: projection
+
+		annotation SummarizationSetBy = User
+
+	column avg_season
+		dataType: double
+		formatString: 0.0
+		lineageTag: 32c0f415-605a-53e7-ab82-833555a2918f
+		summarizeBy: none
+		sourceColumn: avg_season
+
+		annotation SummarizationSetBy = User
+
+	column avg_last3
+		dataType: double
+		formatString: 0.0
+		lineageTag: 07031861-bd24-5473-9b00-957fc8d3b2d0
+		summarizeBy: none
+		sourceColumn: avg_last3
+
+		annotation SummarizationSetBy = User
+
+	column snap_last3
+		dataType: double
+		formatString: 0%
+		lineageTag: 6f614d36-6b14-5c0b-a157-8f891ee97fcd
+		summarizeBy: none
+		sourceColumn: snap_last3
+
+		annotation SummarizationSetBy = User
+
+	column def_factor
+		dataType: double
+		formatString: 0.00
+		lineageTag: 0d55ab98-eb15-5d13-9d28-f67545bc6819
+		summarizeBy: none
+		sourceColumn: def_factor
+
+		annotation SummarizationSetBy = User
+
+	column implied_total
+		dataType: double
+		formatString: 0.0
+		lineageTag: c0902de2-c6e4-52a7-ae28-d630089719e8
+		summarizeBy: none
+		sourceColumn: implied_total
+
+		annotation SummarizationSetBy = User
+
+	column no_line
+		dataType: boolean
+		isHidden
+		lineageTag: 56fd7915-e3bb-520c-a874-de01def7d2f2
+		summarizeBy: none
+		sourceColumn: no_line
+
+		annotation SummarizationSetBy = User
+
+	column injury
+		dataType: string
+		lineageTag: ed6d9466-cbf2-5187-9b5a-779273b67896
+		summarizeBy: none
+		sourceColumn: injury
+
+		annotation SummarizationSetBy = User
+
+	partition 'Weekly Projections' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "weekly_projections.csv") else File.Contents(DataSource & "weekly_projections.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"season", Int64.Type}, {"week", Int64.Type}, {"position", type text}, {"pos_rank", Int64.Type}, {"player", type text}, {"team", type text}, {"opponent", type text}, {"projection", type number}, {"avg_season", type number}, {"avg_last3", type number}, {"snap_last3", type number}, {"def_factor", type number}, {"implied_total", type number}, {"no_line", type logical}, {"injury", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

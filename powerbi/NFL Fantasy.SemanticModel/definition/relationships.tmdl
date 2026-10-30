@@ -1,0 +1,11 @@
+relationship 2dfb5628-b169-5336-94ad-f6bfb962a96a
+	fromColumn: 'Player Seasons'.season
+	toColumn: Seasons.season
+
+relationship a89cdfbb-2861-5cb3-9e48-a4d3f0a7b954
+	fromColumn: 'Player Seasons'.position
+	toColumn: Positions.position
+
+relationship 34b67aec-ffc6-52de-8439-6827abadf2a3
+	fromColumn: 'Weekly Projections'.position
+	toColumn: Positions.position

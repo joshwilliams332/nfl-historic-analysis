@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/1.4.0/schema.json",
+  "name": "46a5988a00d5179e514f",
+  "displayName": "This Week",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280
+}

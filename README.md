@@ -5,7 +5,7 @@ This project tests those instincts against **27 NFL seasons (1999-2025, 144,000 
 changed, what never did, a projection model scored on seasons it never saw, a season-long model for drafts, and
 **live projections for the 2026 season** ([this week's](reports/projections/2026_week08.md)).
 
-**Python · pandas · scikit-learn · matplotlib · Jupyter** · data from [nflverse](https://github.com/nflverse/nflverse-data)
+**Python · pandas · scikit-learn · matplotlib · Jupyter · Power BI (DAX)** · data from [nflverse](https://github.com/nflverse/nflverse-data)
 
 ## Findings: the modern game (2021-2025)
 
@@ -134,9 +134,10 @@ separate age curve per position. Predicting 2024 and 2025, it cuts the error of 
 
 ![2026 preseason projections vs. 2026 so far](reports/figures/15_season_2026_check.png)
 
-The honest 2026 check, seven weeks in: on raw error the model is slightly *behind* "same as 2025" (3.29 vs. 3.23),
-because 2026 is the highest-scoring season in the sample and players have declined less than usual. The ordering
-holds up: the third the model expected to fall most is down 0.9 PPG, and the third it expected to rise is up 0.9.
+The honest 2026 check, about seven weeks in: on raw error the model is slightly *behind* "same as 2025" (3.28 vs.
+3.23), mostly because 2026 is the highest-scoring season in the sample and players have declined less than usual.
+Its read on *who* changes is weak so far (r ≈ 0.2 between predicted and actual change): the players it expected to
+rise are up, but its expected fallers haven't dropped more than everyone else. Worth rechecking after the season.
 
 ## Live: the 2026 season
 
@@ -151,6 +152,13 @@ calls right vs. 62.3%, and a 5.68-point average miss vs. 6.20.
 
 Every week: `python scripts/project_week.py` projects the next unplayed week. Run it again after Friday's injury
 reports to include the tags.
+
+## Interactive Power BI report
+
+[`powerbi/`](powerbi/) holds a Power BI project built on the same data: buttons and sliders to test how well any
+this-season stat predicts next season, find historical seasons that match a profile (and see what happened next),
+explore 27 seasons of trends and individual players, and browse this week's projections.
+See [powerbi/README.md](powerbi/README.md) to open it.
 
 ## Method
 
@@ -198,7 +206,9 @@ notebooks/
   06_season_projections.ipynb    season-long model for drafts, 2026 preseason projections vs. 2026 so far
   07_live_2026_week8.ipynb       2026 backtest and week 8 projections
 scripts/
-  project_week.py  rerunnable weekly projections -> reports/projections/
+  project_week.py         rerunnable weekly projections -> reports/projections/
+  build_powerbi_data.py   exports the CSVs the Power BI report loads -> powerbi/data/
+powerbi/                  Power BI project (semantic model + report), see its README
 src/fantasy/
   data.py        download + cache nflverse player weeks, schedules (Vegas lines), snap counts, injuries, birth dates
   features.py    leakage-safe features (incl. snaps, injury tags, upcoming-week rows), the Mingus heuristic

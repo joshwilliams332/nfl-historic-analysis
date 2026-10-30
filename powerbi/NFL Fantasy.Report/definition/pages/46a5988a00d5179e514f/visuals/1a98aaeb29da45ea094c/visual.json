@@ -1,0 +1,213 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "1a98aaeb29da45ea094c",
+  "position": {
+    "x": 300,
+    "y": 96,
+    "z": 8000,
+    "height": 612,
+    "width": 580,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "pos_rank"
+                }
+              },
+              "queryRef": "Weekly Projections.pos_rank",
+              "nativeQueryRef": "Pos rank",
+              "displayName": "Rank"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "player"
+                }
+              },
+              "queryRef": "Weekly Projections.player",
+              "nativeQueryRef": "Player",
+              "displayName": "Player"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "team"
+                }
+              },
+              "queryRef": "Weekly Projections.team",
+              "nativeQueryRef": "Team",
+              "displayName": "Team"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "opponent"
+                }
+              },
+              "queryRef": "Weekly Projections.opponent",
+              "nativeQueryRef": "opponent",
+              "displayName": "Opp"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "projection"
+                }
+              },
+              "queryRef": "Weekly Projections.projection",
+              "nativeQueryRef": "projection",
+              "displayName": "Projection"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "avg_season"
+                }
+              },
+              "queryRef": "Weekly Projections.avg_season",
+              "nativeQueryRef": "avg_season",
+              "displayName": "Season avg"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "avg_last3"
+                }
+              },
+              "queryRef": "Weekly Projections.avg_last3",
+              "nativeQueryRef": "avg_last3",
+              "displayName": "Last 3"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "snap_last3"
+                }
+              },
+              "queryRef": "Weekly Projections.snap_last3",
+              "nativeQueryRef": "snap_last3",
+              "displayName": "Snap % (last 3)"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "implied_total"
+                }
+              },
+              "queryRef": "Weekly Projections.implied_total",
+              "nativeQueryRef": "implied_total",
+              "displayName": "Team total"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Weekly Projections"
+                    }
+                  },
+                  "Property": "injury"
+                }
+              },
+              "queryRef": "Weekly Projections.injury",
+              "nativeQueryRef": "injury",
+              "displayName": "Injury"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Weekly Projections"
+                  }
+                },
+                "Property": "projection"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Week 8 projections'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "2060a88e0bb7b9ef6961",
+  "position": {
+    "x": 300,
+    "y": 408,
+    "z": 8000,
+    "height": 300,
+    "width": 956,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "age_years"
+                }
+              },
+              "queryRef": "Player Seasons.age_years",
+              "nativeQueryRef": "Age (years)",
+              "displayName": "Age",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Positions"
+                    }
+                  },
+                  "Property": "position"
+                }
+              },
+              "queryRef": "Positions.position",
+              "nativeQueryRef": "position",
+              "displayName": "Position"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Aging Step"
+                }
+              },
+              "queryRef": "Player Seasons.Aging Step",
+              "nativeQueryRef": "Aging Step",
+              "displayName": "PPG change to next season"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Player Seasons"
+                  }
+                },
+                "Property": "age_years"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Aging: average PPG change from one season to the next, by age'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

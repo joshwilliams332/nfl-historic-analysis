@@ -1,0 +1,18 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DataSource", "Player Seasons", "Seasons", "Positions", "Weekly Projections", "Backtest 2026"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table 'Player Seasons'
+ref table Seasons
+ref table Positions
+ref table 'Weekly Projections'
+ref table 'Backtest 2026'
+ref table 'Past Stat'

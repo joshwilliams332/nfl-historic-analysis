@@ -1,0 +1,113 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "8ce716004fe5f5d21eff",
+  "position": {
+    "x": 896,
+    "y": 96,
+    "z": 9000,
+    "height": 612,
+    "width": 360,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Backtest 2026"
+                    }
+                  },
+                  "Property": "week"
+                }
+              },
+              "queryRef": "Backtest 2026.week",
+              "nativeQueryRef": "week",
+              "displayName": "Week",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Backtest 2026"
+                    }
+                  },
+                  "Property": "Model Start/Sit"
+                }
+              },
+              "queryRef": "Backtest 2026.Model Start/Sit",
+              "nativeQueryRef": "Model Start/Sit",
+              "displayName": "Model"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Backtest 2026"
+                    }
+                  },
+                  "Property": "Season Avg Start/Sit"
+                }
+              },
+              "queryRef": "Backtest 2026.Season Avg Start/Sit",
+              "nativeQueryRef": "Season Avg Start/Sit",
+              "displayName": "Season average"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Backtest 2026"
+                  }
+                },
+                "Property": "week"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2026 so far: start/sit accuracy by week'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
