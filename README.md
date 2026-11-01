@@ -5,7 +5,9 @@ This project tests those instincts against **27 NFL seasons (1999-2025, 144,000 
 changed, what never did, a projection model scored on seasons it never saw, a season-long model for drafts, and
 **live projections for the 2026 season** ([this week's](reports/projections/2026_week08.md)).
 
-**Python · pandas · scikit-learn · matplotlib · Jupyter · Power BI (DAX)** · data from [nflverse](https://github.com/nflverse/nflverse-data)
+**Live, phone-friendly version: [joshwilliams332.github.io/nfl-historic-analysis](https://joshwilliams332.github.io/nfl-historic-analysis/)**
+
+**Python · pandas · scikit-learn · matplotlib · Jupyter · Power BI (DAX) · JavaScript** · data from [nflverse](https://github.com/nflverse/nflverse-data)
 
 ## Findings: the modern game (2021-2025)
 
@@ -153,6 +155,15 @@ calls right vs. 62.3%, and a 5.68-point average miss vs. 6.20.
 Every week: `python scripts/project_week.py` projects the next unplayed week. Run it again after Friday's injury
 reports to include the tags.
 
+## Interactive site (phone-friendly)
+
+[`site/`](site/) is a static web version of the Power BI report (same seven views, buttons, and sliders) built
+for phones first, published with GitHub Pages. Refresh its data with:
+
+```bash
+python scripts/build_powerbi_data.py && python scripts/build_site_data.py
+```
+
 ## Interactive Power BI report
 
 [`powerbi/`](powerbi/) holds a Power BI project built on the same data: buttons and sliders to test how well any
@@ -209,6 +220,8 @@ notebooks/
 scripts/
   project_week.py         rerunnable weekly projections -> reports/projections/
   build_powerbi_data.py   exports the CSVs the Power BI report loads -> powerbi/data/
+  build_site_data.py      compact JSON for the web version -> site/data/
+site/                     phone-first web version (GitHub Pages)
 powerbi/                  Power BI project (semantic model + report), see its README
 src/fantasy/
   data.py        download + cache nflverse player weeks, schedules (Vegas lines), snap counts, injuries, birth dates
