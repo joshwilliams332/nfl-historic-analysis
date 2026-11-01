@@ -1,0 +1,168 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "4d4c21ea406ad4e41379",
+  "position": {
+    "x": 620,
+    "y": 204,
+    "z": 16000,
+    "height": 504,
+    "width": 636,
+    "tabOrder": 16000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Receivers"
+                    }
+                  },
+                  "Property": "receiver_label"
+                }
+              },
+              "queryRef": "Receivers.receiver_label",
+              "nativeQueryRef": "receiver_label",
+              "displayName": "Receiver"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "est_cb"
+                }
+              },
+              "queryRef": "WR Targets.est_cb",
+              "nativeQueryRef": "est_cb",
+              "displayName": "Estimated corner"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "est_cb_slot"
+                }
+              },
+              "queryRef": "WR Targets.est_cb_slot",
+              "nativeQueryRef": "est_cb_slot",
+              "displayName": "Listed as"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "WR Tgts"
+                }
+              },
+              "queryRef": "WR Targets.WR Tgts",
+              "nativeQueryRef": "WR Tgts",
+              "displayName": "Targets"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "Receiving Yards"
+                }
+              },
+              "queryRef": "WR Targets.Receiving Yards",
+              "nativeQueryRef": "Receiving Yards",
+              "displayName": "Yards"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "Success Rate"
+                }
+              },
+              "queryRef": "WR Targets.Success Rate",
+              "nativeQueryRef": "Success Rate",
+              "displayName": "Success"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "Catch Rate"
+                }
+              },
+              "queryRef": "WR Targets.Catch Rate",
+              "nativeQueryRef": "Catch Rate",
+              "displayName": "Catch %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "WR Targets"
+                  }
+                },
+                "Property": "WR Tgts"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Receiver vs. estimated corner'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,218 @@
+table 'WR Targets'
+	lineageTag: 40c711fb-a3b9-560c-92b1-57f121b45d48
+
+	measure 'WR Tgts' =
+			COUNTROWS('WR Targets')
+		formatString: #,0
+		lineageTag: 73e2e291-d65b-50dd-bfe4-1542df808286
+
+	measure Receptions =
+			SUM('WR Targets'[complete])
+		formatString: #,0
+		lineageTag: b3c83455-5934-56c5-aa47-857efb7e1819
+
+	measure 'Catch Rate' =
+			DIVIDE([Receptions], [WR Tgts])
+		formatString: 0.0%
+		lineageTag: 6df7c5de-dba7-5101-9189-eda1a60311ea
+
+	measure 'Receiving Yards' =
+			SUM('WR Targets'[yards])
+		formatString: #,0
+		lineageTag: 8eac73b1-9e0a-5352-9460-8daf485b24c8
+
+	measure 'Yards per Target' =
+			DIVIDE([Receiving Yards], [WR Tgts])
+		formatString: 0.0
+		lineageTag: fd56596f-c01d-5242-93a5-df9291a2a777
+
+	/// Share of targets where the play added expected points (nflverse success = EPA > 0).
+	measure 'Success Rate' =
+			AVERAGE('WR Targets'[success])
+		formatString: 0.0%
+		lineageTag: 2a182db2-33ac-551f-b4b7-28b5a20ac6f8
+
+	measure 'Receiving TDs' =
+			SUM('WR Targets'[td])
+		formatString: 0
+		lineageTag: ab22dce2-02eb-5707-8e91-0ae0365083a7
+
+	/// Next Gen Stats average separation at the catch point or incompletion, weighted by targets. Not split by side of field.
+	measure 'Avg Separation' =
+			DIVIDE(SUMX('WR Games', 'WR Games'[avg_separation] * 'WR Games'[targets]), SUM('WR Games'[targets]))
+		formatString: 0.00
+		lineageTag: 433da93c-4311-5e4d-aa35-14ce2544f537
+
+	measure 'Min WR Targets Value' =
+			MIN('Min WR Targets'[Value])
+		formatString: 0
+		lineageTag: 91e60151-fea4-57b7-9ad3-e560d29d5e1e
+
+	measure 'WR Metric Value' =
+			VAR m = SELECTEDVALUE('WR Metric'[Metric], "Success rate %")
+			VAR v =
+			    SWITCH(
+			        m,
+			        "Success rate %", [Success Rate] * 100,
+			        "Receiving yards", [Receiving Yards],
+			        "Yards per target", [Yards per Target],
+			        "Catch rate %", [Catch Rate] * 100,
+			        "Targets", [WR Tgts],
+			        "Separation (yds)", [Avg Separation]
+			    )
+			RETURN
+			    IF([WR Tgts] > 0 && [WR Tgts] >= [Min WR Targets Value], v)
+		formatString: #,0.0
+		lineageTag: 4e750890-0149-566a-af60-aad770cd1bc8
+
+	column game_id
+		dataType: string
+		isHidden
+		lineageTag: 3b11f47c-0936-5b28-8e08-339e6ee7ebca
+		summarizeBy: none
+		sourceColumn: game_id
+
+		annotation SummarizationSetBy = User
+
+	column offense
+		dataType: string
+		isHidden
+		lineageTag: 8e8cfae0-a89e-5724-8ce2-4e766720b76f
+		summarizeBy: none
+		sourceColumn: offense
+
+		annotation SummarizationSetBy = User
+
+	column defense
+		dataType: string
+		isHidden
+		lineageTag: 98e99443-ef6f-5a0c-9e10-22e5d95980d9
+		summarizeBy: none
+		sourceColumn: defense
+
+		annotation SummarizationSetBy = User
+
+	column receiver_id
+		dataType: string
+		isHidden
+		lineageTag: e09901ea-1132-59f3-91bf-687b405d696f
+		summarizeBy: none
+		sourceColumn: receiver_id
+
+		annotation SummarizationSetBy = User
+
+	column receiver
+		dataType: string
+		isHidden
+		lineageTag: 731aed30-bcee-5814-9c3f-d9196441606e
+		summarizeBy: none
+		sourceColumn: receiver
+
+		annotation SummarizationSetBy = User
+
+	column side
+		dataType: string
+		isHidden
+		lineageTag: ebe52346-0a35-5f79-a619-d98a8e582c70
+		summarizeBy: none
+		sourceColumn: side
+
+		annotation SummarizationSetBy = User
+
+	column air_yards
+		dataType: double
+		formatString: 0.0
+		lineageTag: cab8e60a-3f38-548c-beb7-231c68a19202
+		summarizeBy: none
+		sourceColumn: air_yards
+
+		annotation SummarizationSetBy = User
+
+	column complete
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 598f7e85-8633-5cd5-ac5b-e5f4b3fccd07
+		summarizeBy: sum
+		sourceColumn: complete
+
+		annotation SummarizationSetBy = User
+
+	column yards
+		dataType: double
+		formatString: #,0
+		isHidden
+		lineageTag: ab78568a-c07b-5e48-904d-82f9d235515d
+		summarizeBy: sum
+		sourceColumn: yards
+
+		annotation SummarizationSetBy = User
+
+	column td
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: dda20748-65ba-5a34-aaf7-6edbb1269e9c
+		summarizeBy: sum
+		sourceColumn: td
+
+		annotation SummarizationSetBy = User
+
+	column interception
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 17b519d8-7892-503c-b74f-c62c81258927
+		summarizeBy: sum
+		sourceColumn: interception
+
+		annotation SummarizationSetBy = User
+
+	column success
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: 1d57dbe8-6c42-5cf8-adab-f8afce84c0f3
+		summarizeBy: none
+		sourceColumn: success
+
+		annotation SummarizationSetBy = User
+
+	column epa
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: a842013a-b8eb-5ae4-84cb-4b79dbafc5a8
+		summarizeBy: none
+		sourceColumn: epa
+
+		annotation SummarizationSetBy = User
+
+	column est_cb
+		dataType: string
+		lineageTag: 0d08cb6d-3aac-5baf-81b6-7953dcdadec0
+		summarizeBy: none
+		sourceColumn: est_cb
+
+		annotation SummarizationSetBy = User
+
+	column est_cb_slot
+		dataType: string
+		lineageTag: 50e67c98-7e9f-553a-8278-284c9a3c890e
+		summarizeBy: none
+		sourceColumn: est_cb_slot
+
+		annotation SummarizationSetBy = User
+
+	partition 'WR Targets' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "wr_targets.csv") else File.Contents(DataSource & "wr_targets.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"game_id", type text}, {"offense", type text}, {"defense", type text}, {"receiver_id", type text}, {"receiver", type text}, {"side", type text}, {"air_yards", type number}, {"complete", Int64.Type}, {"yards", type number}, {"td", Int64.Type}, {"interception", Int64.Type}, {"success", type number}, {"epa", type number}, {"est_cb", type text}, {"est_cb_slot", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,90 @@
+table 'WR Games'
+	lineageTag: 36d09ecc-2335-5e4f-81a9-2a3420491bed
+
+	column game_id
+		dataType: string
+		isHidden
+		lineageTag: f8b89d9c-5c08-5365-8693-299f720f9a1f
+		summarizeBy: none
+		sourceColumn: game_id
+
+		annotation SummarizationSetBy = User
+
+	column team
+		dataType: string
+		isHidden
+		lineageTag: b0017c31-ef1f-5490-b5ee-05a070ebf4be
+		summarizeBy: none
+		sourceColumn: team
+
+		annotation SummarizationSetBy = User
+
+	column opponent
+		dataType: string
+		isHidden
+		lineageTag: 5cc6ec54-58eb-5882-a80f-c289dfbffb9b
+		summarizeBy: none
+		sourceColumn: opponent
+
+		annotation SummarizationSetBy = User
+
+	column receiver_id
+		dataType: string
+		isHidden
+		lineageTag: 66924db5-bdde-5a22-a21c-c854e821f1f2
+		summarizeBy: none
+		sourceColumn: receiver_id
+
+		annotation SummarizationSetBy = User
+
+	column receiver
+		dataType: string
+		isHidden
+		lineageTag: ff33ac78-c399-5ca0-961a-0e11a9bfbd5b
+		summarizeBy: none
+		sourceColumn: receiver
+
+		annotation SummarizationSetBy = User
+
+	column avg_separation
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: 93456b9c-3d14-509f-bd17-6459be313125
+		summarizeBy: none
+		sourceColumn: avg_separation
+
+		annotation SummarizationSetBy = User
+
+	column avg_cushion
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: b81dc694-e6d0-51ce-8940-0710f47f30ce
+		summarizeBy: none
+		sourceColumn: avg_cushion
+
+		annotation SummarizationSetBy = User
+
+	column targets
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 2e183be5-6cf8-5835-88dd-66003602346b
+		summarizeBy: sum
+		sourceColumn: targets
+
+		annotation SummarizationSetBy = User
+
+	partition 'WR Games' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "wr_games.csv") else File.Contents(DataSource & "wr_games.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"game_id", type text}, {"team", type text}, {"opponent", type text}, {"receiver_id", type text}, {"receiver", type text}, {"avg_separation", type number}, {"avg_cushion", type number}, {"targets", Int64.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

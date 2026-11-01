@@ -157,7 +157,8 @@ reports to include the tags.
 
 [`powerbi/`](powerbi/) holds a Power BI project built on the same data: buttons and sliders to test how well any
 this-season stat predicts next season, find historical seasons that match a profile (and see what happened next),
-explore 27 seasons of trends and individual players, and browse this week's projections.
+explore 27 seasons of trends and individual players, browse this week's projections, and compare receivers with
+corners (2025-26) by team, game and side of the field.
 See [powerbi/README.md](powerbi/README.md) to open it.
 
 ## Method

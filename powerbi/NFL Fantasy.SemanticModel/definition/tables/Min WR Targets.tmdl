@@ -1,0 +1,18 @@
+table 'Min WR Targets'
+	lineageTag: c654ec2a-9baf-584d-81d3-f815d9f27a98
+
+	column Value
+		dataType: int64
+		formatString: 0
+		lineageTag: 96c93763-ae8e-50be-aa78-c86e532cda46
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Min WR Targets' = calculated
+		mode: import
+		source =
+				GENERATESERIES(0, 150, 1)
+
+	annotation PBI_Id = 0512477de8ebea796584

@@ -7,6 +7,9 @@ Tables:
   seasons.csv, positions.csv   small lookup tables
   weekly_projections.csv  the latest week's projections (from scripts/project_week.py)
   backtest_2026.csv       weekly model vs. season average, 2026 weeks played so far
+  wr_targets.csv, wr_games.csv, cb_games.csv, matchup_games.csv, teams.csv, sides.csv
+                          WR vs. CB page (2025+): every WR target with its side of the field and an
+                          estimated covering corner, NGS separation, and PFR coverage stats per corner
 """
 from __future__ import annotations
 
@@ -19,7 +22,7 @@ sys.path.insert(0, str(ROOT / "src"))
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from fantasy.data import CURRENT_SEASON  # noqa: E402
+from fantasy.data import CURRENT_SEASON, _fetch, load_games  # noqa: E402
 from fantasy.evaluate import pairwise_accuracy  # noqa: E402
 from fantasy.features import TARGET, model_sample  # noqa: E402
 from fantasy.season import fit_season_model, predict, season_pairs, season_table  # noqa: E402
@@ -104,6 +107,108 @@ def backtest_and_projections() -> tuple[pd.DataFrame, pd.DataFrame]:
     return proj, pd.DataFrame(rows)
 
 
+MATCHUP_SEASONS = [2025, 2026]  # depth charts name left/right corners only from 2025 on
+# pass_location is from the offense's view; the defense's right corner lines up across from the offense's left.
+SIDE_CB = {"left": "RCB", "middle": "NB", "right": "LCB"}
+SIDE_NAME = {"left": "Left", "middle": "Middle", "right": "Right"}
+
+
+def corner_sides() -> pd.DataFrame:
+    """Each team's listed starting LCB / RCB / nickel for each game, from the latest depth chart before kickoff."""
+    g = load_games(MATCHUP_SEASONS)
+    g = g[g.points.notna()][["season", "week", "team"]]
+    sched = pd.read_csv(_fetch("schedules/games.csv"), usecols=["game_id", "season", "week", "game_type", "gameday",
+                                                               "home_team", "away_team"])
+    sched = sched[sched.season.isin(MATCHUP_SEASONS) & (sched.game_type == "REG")]
+    games = pd.concat([sched.assign(team=sched.home_team), sched.assign(team=sched.away_team)])
+    games = games.merge(g, on=["season", "week", "team"])[["game_id", "season", "week", "gameday", "team"]]
+    games["gameday"] = pd.to_datetime(games.gameday)
+    dc = pd.concat([pd.read_csv(_fetch(f"depth_charts/depth_charts_{s}.csv"), low_memory=False)
+                    for s in MATCHUP_SEASONS])
+    dc["date"] = pd.to_datetime(dc.dt.str[:10])
+    dc = dc[dc.pos_abb.isin(list(SIDE_CB.values())) & (dc.pos_rank == 1)]
+    snaps = dc[["team", "date"]].drop_duplicates().sort_values("date").rename(columns={"date": "snap"})
+    games = pd.merge_asof(games.sort_values("gameday"), snaps, left_on="gameday", right_on="snap", by="team")
+    out = games.merge(dc[["team", "date", "pos_abb", "gsis_id"]], left_on=["team", "snap"], right_on=["team", "date"])
+    return out[["game_id", "team", "pos_abb", "gsis_id"]].drop_duplicates(["game_id", "team", "pos_abb"])
+
+
+def matchups() -> dict[str, pd.DataFrame]:
+    players = pd.read_csv(_fetch("players/players.csv"), usecols=["gsis_id", "pfr_id", "display_name", "position"],
+                          low_memory=False)
+    names = players.drop_duplicates("gsis_id").set_index("gsis_id").display_name
+    sched = pd.read_csv(_fetch("schedules/games.csv"), usecols=["game_id", "season", "week", "game_type", "gameday",
+                                                               "home_team", "away_team", "home_score"])
+    sched = sched[sched.season.isin(MATCHUP_SEASONS) & (sched.game_type == "REG") & sched.home_score.notna()]
+    games = sched.assign(label=sched.season.astype(str) + " Wk " + sched.week.astype(str).str.zfill(2) + ": "
+                         + sched.away_team + " @ " + sched.home_team)[["game_id", "season", "week", "gameday", "label"]]
+
+    cols = ["game_id", "season", "week", "season_type", "posteam", "defteam", "pass_location", "receiver_player_id",
+            "air_yards", "complete_pass", "yards_gained", "pass_touchdown", "interception", "success", "epa",
+            "two_point_attempt"]
+    pbp = pd.concat([pd.read_csv(_fetch(f"pbp/play_by_play_{s}.csv.gz"), usecols=cols, low_memory=False)
+                     for s in MATCHUP_SEASONS])
+    wr_ids = set(players[players.position == "WR"].gsis_id)
+    t = pbp[(pbp.season_type == "REG") & pbp.receiver_player_id.isin(wr_ids) & pbp.pass_location.notna()
+            & (pbp.two_point_attempt != 1) & pbp.game_id.isin(games.game_id)].copy()
+    sides = corner_sides()
+    t["cb_slot"] = t.pass_location.map(SIDE_CB)
+    t = t.merge(sides.rename(columns={"team": "defteam", "pos_abb": "cb_slot", "gsis_id": "est_cb_id"}),
+                on=["game_id", "defteam", "cb_slot"], how="left")
+    wr_targets = pd.DataFrame({
+        "game_id": t.game_id, "offense": t.posteam, "defense": t.defteam,
+        "receiver_id": t.receiver_player_id, "receiver": t.receiver_player_id.map(names),
+        "side": t.pass_location.map(SIDE_NAME), "air_yards": t.air_yards, "complete": t.complete_pass.astype(int),
+        "yards": np.where(t.complete_pass == 1, t.yards_gained, 0), "td": t.pass_touchdown.astype(int),
+        "interception": t.interception.astype(int), "success": t.success, "epa": t.epa,
+        "est_cb": t.est_cb_id.map(names).fillna("Not listed"), "est_cb_slot": t.cb_slot})
+
+    ngs = pd.read_csv(_fetch("nextgen_stats/ngs_receiving.csv.gz"))
+    ngs = ngs[ngs.season.isin(MATCHUP_SEASONS) & (ngs.week > 0) & (ngs.season_type == "REG")
+              & (ngs.player_position == "WR")]
+    long = pd.concat([sched.assign(team=sched.home_team, opponent=sched.away_team),
+                      sched.assign(team=sched.away_team, opponent=sched.home_team)])[
+        ["game_id", "season", "week", "team", "opponent"]]
+    wr_games = ngs.merge(long, left_on=["season", "week", "team_abbr"], right_on=["season", "week", "team"])
+    wr_games = wr_games[["game_id", "team", "opponent", "player_gsis_id", "player_display_name", "avg_separation",
+                         "avg_cushion", "targets"]].rename(columns={"player_gsis_id": "receiver_id",
+                                                                    "player_display_name": "receiver"})
+
+    adv = pd.concat([pd.read_csv(_fetch(f"pfr_advstats/advstats_week_def_{s}.csv")) for s in MATCHUP_SEASONS])
+    ids = players.dropna(subset=["pfr_id"]).drop_duplicates("pfr_id")
+    adv = adv[(adv.game_type == "REG") & adv.game_id.isin(games.game_id)].merge(
+        ids[["pfr_id", "gsis_id", "position"]], left_on="pfr_player_id", right_on="pfr_id")
+    adv = adv[(adv.position == "CB") & (adv.def_targets > 0)]
+    slot = sides.rename(columns={"team": "defense", "pos_abb": "slot"})
+    cb = adv.rename(columns={"team": "defense", "opponent": "offense"}).merge(
+        slot, on=["game_id", "defense", "gsis_id"], how="left")
+    cb_games = pd.DataFrame({
+        "game_id": cb.game_id, "defense": cb.defense, "offense": cb.offense, "cb_id": cb.gsis_id,
+        "cb": cb.gsis_id.map(names).fillna(cb.pfr_player_name), "listed_as": cb.slot.fillna("Backup / not listed"),
+        "side": cb.slot.map({v: SIDE_NAME[k] for k, v in SIDE_CB.items()}),
+        "targets": cb.def_targets, "completions": cb.def_completions_allowed, "yards": cb.def_yards_allowed,
+        "tds": cb.def_receiving_td_allowed, "ints": cb.def_ints, "rating": cb.def_passer_rating_allowed,
+        "adot": cb.def_adot, "yac": cb.def_yards_after_catch})
+    # PFR leaves yards / TDs / YAC blank when the corner allowed no catches; those are zeros.
+    no_catch = cb_games.completions == 0
+    cb_games.loc[no_catch, ["yards", "tds", "yac"]] = cb_games.loc[no_catch, ["yards", "tds", "yac"]].fillna(0)
+    # One row per receiver, so target stats and NGS separation share an axis. Label = name + most frequent team.
+    both = pd.concat([wr_targets[["receiver_id", "receiver", "offense"]],
+                      wr_games.rename(columns={"team": "offense"})[["receiver_id", "receiver", "offense"]]])
+    main_team = both.groupby("receiver_id").offense.agg(lambda x: x.value_counts().index[0])
+    name = both.dropna(subset=["receiver"]).groupby("receiver_id").receiver.first()
+    receivers = pd.DataFrame({"receiver_id": main_team.index})
+    receivers["receiver"] = receivers.receiver_id.map(name)
+    receivers["receiver_label"] = receivers.receiver + " (" + receivers.receiver_id.map(main_team) + ")"
+    assert receivers.receiver_label.is_unique, "receiver labels must be unique"
+    teams = pd.DataFrame({"team": sorted(set(sched.home_team) | set(sched.away_team))})
+    side_tbl = pd.DataFrame({"side": ["Left", "Middle", "Right"], "sort_order": [1, 2, 3],
+                             "facing": ["Offense's left: defense's RCB", "Middle: nickel back",
+                                        "Offense's right: defense's LCB"]})
+    return {"wr_targets": wr_targets, "wr_games": wr_games, "receivers": receivers, "cb_games": cb_games, "matchup_games": games,
+            "teams": teams, "sides": side_tbl}
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     ps = player_seasons()
@@ -118,6 +223,8 @@ def main() -> None:
     proj, back = backtest_and_projections()
     proj.to_csv(OUT / "weekly_projections.csv", index=False, float_format="%.3f")
     back.to_csv(OUT / "backtest_2026.csv", index=False, float_format="%.4f")
+    for name, table in matchups().items():
+        table.to_csv(OUT / f"{name}.csv", index=False, float_format="%.4f")
     for f in sorted(OUT.glob("*.csv")):
         print(f"{f.name}: {sum(1 for _ in open(f)) - 1:,} rows, {f.stat().st_size / 1e6:.1f} MB")
 

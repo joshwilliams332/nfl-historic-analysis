@@ -1,0 +1,59 @@
+table 'Matchup Games'
+	lineageTag: b3227afa-1c24-5cf5-b382-e5a4f095220a
+
+	column game_id
+		dataType: string
+		isHidden
+		lineageTag: e151101c-a161-5732-9f35-f5ebc5eec6ae
+		summarizeBy: none
+		sourceColumn: game_id
+
+		annotation SummarizationSetBy = User
+
+	column season
+		dataType: int64
+		formatString: 0
+		lineageTag: 83fa036f-44ff-5381-8a94-a9d585c7cf57
+		summarizeBy: none
+		sourceColumn: season
+
+		annotation SummarizationSetBy = User
+
+	column week
+		dataType: int64
+		formatString: 0
+		lineageTag: 56d66061-31a0-5ec8-8c9d-cd30d59253f3
+		summarizeBy: none
+		sourceColumn: week
+
+		annotation SummarizationSetBy = User
+
+	column gameday
+		dataType: string
+		isHidden
+		lineageTag: fd77ca32-ee43-5867-9b9a-65ee0e378f5e
+		summarizeBy: none
+		sourceColumn: gameday
+
+		annotation SummarizationSetBy = User
+
+	column label
+		dataType: string
+		lineageTag: e38a6fb1-d09c-5875-ae9f-136351e30b17
+		summarizeBy: none
+		sourceColumn: label
+
+		annotation SummarizationSetBy = User
+
+	partition 'Matchup Games' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "matchup_games.csv") else File.Contents(DataSource & "matchup_games.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"game_id", type text}, {"season", Int64.Type}, {"week", Int64.Type}, {"gameday", type text}, {"label", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

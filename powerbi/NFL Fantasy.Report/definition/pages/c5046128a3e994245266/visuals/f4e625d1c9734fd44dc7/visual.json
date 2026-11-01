@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "f4e625d1c9734fd44dc7",
+  "position": {
+    "x": 300.0,
+    "y": 276,
+    "z": 12000,
+    "height": 432,
+    "width": 470.0,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Receivers"
+                    }
+                  },
+                  "Property": "receiver_label"
+                }
+              },
+              "queryRef": "Receivers.receiver_label",
+              "nativeQueryRef": "receiver_label",
+              "displayName": "Receiver",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "WR Metric Value"
+                }
+              },
+              "queryRef": "WR Targets.WR Metric Value",
+              "nativeQueryRef": "WR Metric Value",
+              "displayName": "Value"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "WR Targets"
+                  }
+                },
+                "Property": "WR Metric Value"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Receivers, ranked by the selected stat'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

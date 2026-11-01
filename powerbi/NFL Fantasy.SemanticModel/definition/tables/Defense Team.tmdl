@@ -1,0 +1,23 @@
+table 'Defense Team'
+	lineageTag: 014a3739-4807-5736-96de-1cf65442fe39
+
+	column team
+		dataType: string
+		lineageTag: df4b5b7a-50c1-5e87-bf6c-ac91d3c01f58
+		summarizeBy: none
+		sourceColumn: team
+
+		annotation SummarizationSetBy = User
+
+	partition 'Defense Team' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "teams.csv") else File.Contents(DataSource & "teams.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"team", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

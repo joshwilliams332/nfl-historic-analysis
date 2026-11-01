@@ -12,6 +12,7 @@ table 'Past Stat'
 
 	column SortOrder
 		dataType: int64
+		formatString: 0
 		isHidden
 		lineageTag: b9bf0e5a-8e38-583f-992e-8f2e6b9faf3a
 		summarizeBy: none
@@ -35,13 +36,13 @@ table 'Past Stat'
 				    "SortOrder", INTEGER,
 				    "Meaning", STRING,
 				    {
-				    {"PPG", 1, "Fantasy points per game"},
-				    {"Touches/G", 2, "Carries + receptions per game"},
-				    {"Targets/G", 3, "Targets per game (none recorded 2003-2008)"},
-				    {"TDs/G", 4, "Rushing + receiving touchdowns per game"},
-				    {"TD rate", 5, "Touchdowns per touch"},
-				    {"Snap share", 6, "Share of offensive snaps (2013+)"},
-				    {"Age", 7, "Age on Sept. 1"}
+				        {"PPG", 1, "Fantasy points per game"},
+				        {"Touches/G", 2, "Carries + receptions per game"},
+				        {"Targets/G", 3, "Targets per game (none recorded 2003-2008)"},
+				        {"TDs/G", 4, "Rushing + receiving touchdowns per game"},
+				        {"TD rate", 5, "Touchdowns per touch"},
+				        {"Snap share", 6, "Share of offensive snaps (2013+)"},
+				        {"Age", 7, "Age on Sept. 1"}
 				    }
 				)
 

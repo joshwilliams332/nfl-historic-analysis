@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation PBI_QueryOrder = ["DataSource", "Player Seasons", "Seasons", "Positions", "Weekly Projections", "Backtest 2026"]
+annotation PBI_QueryOrder = ["DataSource", "Player Seasons", "Seasons", "Positions", "Weekly Projections", "Backtest 2026", "Matchup Games", "Offense Team", "Defense Team", "Sides", "Receivers", "WR Targets", "WR Games", "CB Games"]
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
@@ -15,4 +15,16 @@ ref table Seasons
 ref table Positions
 ref table 'Weekly Projections'
 ref table 'Backtest 2026'
+ref table 'Matchup Games'
+ref table 'Offense Team'
+ref table 'Defense Team'
+ref table Sides
+ref table Receivers
+ref table 'WR Targets'
+ref table 'WR Games'
+ref table 'CB Games'
 ref table 'Past Stat'
+ref table 'WR Metric'
+ref table 'CB Metric'
+ref table 'Min WR Targets'
+ref table 'Min CB Targets'

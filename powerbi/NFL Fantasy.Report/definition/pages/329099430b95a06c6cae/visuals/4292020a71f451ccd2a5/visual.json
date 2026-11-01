@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "4292020a71f451ccd2a5",
+  "position": {
+    "x": 300,
+    "y": 460,
+    "z": 15000,
+    "height": 248,
+    "width": 304,
+    "tabOrder": 15000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sides"
+                    }
+                  },
+                  "Property": "side"
+                }
+              },
+              "queryRef": "Sides.side",
+              "nativeQueryRef": "side",
+              "displayName": "Side",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "Success Rate"
+                }
+              },
+              "queryRef": "WR Targets.Success Rate",
+              "nativeQueryRef": "Success Rate",
+              "displayName": "Success rate"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Sides"
+                  }
+                },
+                "Property": "side"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Success rate by side'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -11,6 +11,8 @@ text files, so they live in git next to the Python.
 | **27 Seasons** | Position share of top-150 fantasy points, 300-carry running backs per season, and aging curves by position, filtered by position buttons and a season slider. |
 | **Player Explorer** | Search any player since 1999: PPG by season against the top-24 average at their position, career numbers, and the 2026 projection. |
 | **This Week** | The latest weekly projections by position, with the model's 2026 start/sit track record. |
+| **WR vs CB** | 2025-2026. Buttons choose a receiver stat (success rate, yards, yards per target, catch rate, targets, separation) and a corner stat (yards, yards per target, catch %, passer rating or TDs allowed). Ranked bar charts for each, with minimum-target sliders and filters for season, weeks, game, offense, defense and side of the field. |
+| **Estimated Matchups** | Same filters (synced). Targets and success rate by side of the field, and a table of each receiver against the corner the defense listed on that side. |
 
 ## Open it
 
@@ -35,6 +37,9 @@ With nothing selected, you should see:
 * **Find Similar Players**: **9,159** matching seasons, **47%** improved next year, average change **-0.1** PPG,
   **13%** top-12 next year.
 * **27 Seasons**: wide receivers at about **48%** of top-150 points in 1999 and **33%** in 2025.
+* **Estimated Matchups**: **13,571** targets, **50.5%** success rate, **8.0** yards per target, **62.2%** catch rate.
+* **WR vs CB**, receiver stat = Success rate %, minimum targets slider starting at 100: Puka Nacua **65.4**,
+  Jaxon Smith-Njigba **64.3**, Stefon Diggs **63.6** at the top.
 
 If the numbers differ, the data didn't refresh fully: check **Transform data** for errors in the queries.
 
@@ -53,8 +58,15 @@ Commit and push the CSVs, then **Refresh** in Power BI.
   for seasons and positions, weekly projections, the 2026 backtest), relationships, and the DAX measures. The
   correlation card is computed in DAX over whatever the slicers leave in view; the stat buttons are a disconnected
   `Past Stat` table read by a `SWITCH` measure.
-* `NFL Fantasy.Report/`: the five pages, one `visual.json` per visual. Every report file validates against Microsoft's
+* `NFL Fantasy.Report/`: the seven pages, one `visual.json` per visual. Every report file validates against Microsoft's
   published PBIR schemas.
+* **WR vs CB data limits.** Receiver targets, side of the field (`pass_location`, from the offense's view) and
+  success come from nflverse play-by-play; separation from Next Gen Stats; corner coverage stats from Pro Football
+  Reference. Which corner covered which receiver isn't public, so matchups are *estimated* from the depth chart
+  (offense's left → defense's listed RCB, middle → nickel, right → LCB). Depth charts only name left/right corners
+  from 2025 on, and the listed sides only weakly track where passes go (r ≈ 0.1 between a corner's share of targets
+  and the share thrown to their side), because corners shadow, switch sides and play zone. Separation *allowed* by
+  corners isn't published anywhere public.
 * Colors follow the notebooks: WR blue, RB orange, QB aqua, TE violet.
 * The report was written as files rather than built by clicking in Power BI Desktop, so its first open is its first
   real test. If a visual looks off, a screenshot is enough to fix it.

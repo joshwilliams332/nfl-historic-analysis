@@ -1,0 +1,42 @@
+table Sides
+	lineageTag: 17ef49bc-3a7b-58d6-9850-c420c200781c
+
+	column side
+		dataType: string
+		lineageTag: 8fb22439-f19b-52cc-b1be-c83b7c233fa4
+		summarizeBy: none
+		sourceColumn: side
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = User
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 12143f08-546c-5bc5-920d-c4fd99504d21
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = User
+
+	column facing
+		dataType: string
+		lineageTag: 0eecdd0a-1deb-51a2-9449-99b36f438197
+		summarizeBy: none
+		sourceColumn: facing
+
+		annotation SummarizationSetBy = User
+
+	partition Sides = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "sides.csv") else File.Contents(DataSource & "sides.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"side", type text}, {"sort_order", Int64.Type}, {"facing", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
