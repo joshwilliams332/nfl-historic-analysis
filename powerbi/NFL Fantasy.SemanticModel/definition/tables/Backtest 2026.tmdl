@@ -1,0 +1,99 @@
+table 'Backtest 2026'
+	lineageTag: 99f17bc9-1043-5587-99f0-e3e023150825
+
+	measure 'Model Start/Sit' =
+			AVERAGE('Backtest 2026'[model_start_sit])
+		formatString: 0.0%
+		lineageTag: 2809e70b-e5fa-516a-9e47-5c09895f2614
+
+	measure 'Season Avg Start/Sit' =
+			AVERAGE('Backtest 2026'[season_avg_start_sit])
+		formatString: 0.0%
+		lineageTag: 1ddaca10-ffb8-583f-ad4d-22c971658af2
+
+	measure 'Model MAE' =
+			AVERAGE('Backtest 2026'[model_mae])
+		formatString: 0.00
+		lineageTag: a122a34b-dd09-5249-ab13-e76b4e009b44
+
+	measure 'Season Avg MAE' =
+			AVERAGE('Backtest 2026'[season_avg_mae])
+		formatString: 0.00
+		lineageTag: 851da45f-ab07-5728-9a46-80010b5cc188
+
+	column season
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 294170b3-50e0-589d-9516-fda5506b7500
+		summarizeBy: none
+		sourceColumn: season
+
+		annotation SummarizationSetBy = User
+
+	column week
+		dataType: int64
+		formatString: 0
+		lineageTag: b77ab9ef-94fe-5c8f-b7a1-d4c89f0bbeaf
+		summarizeBy: none
+		sourceColumn: week
+
+		annotation SummarizationSetBy = User
+
+	column player_games
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f9ac80b-bfb0-533e-aab1-c9054b6ef9fb
+		summarizeBy: sum
+		sourceColumn: player_games
+
+		annotation SummarizationSetBy = User
+
+	column model_start_sit
+		dataType: double
+		formatString: 0.0%
+		lineageTag: bec0552d-de7f-554d-afbc-bf0089c804cd
+		summarizeBy: none
+		sourceColumn: model_start_sit
+
+		annotation SummarizationSetBy = User
+
+	column season_avg_start_sit
+		dataType: double
+		formatString: 0.0%
+		lineageTag: fbf7c61c-2221-5ee1-b2c6-582efd448018
+		summarizeBy: none
+		sourceColumn: season_avg_start_sit
+
+		annotation SummarizationSetBy = User
+
+	column model_mae
+		dataType: double
+		formatString: 0.00
+		lineageTag: 1c558707-a49f-5c62-8194-cd2f3e297ffd
+		summarizeBy: none
+		sourceColumn: model_mae
+
+		annotation SummarizationSetBy = User
+
+	column season_avg_mae
+		dataType: double
+		formatString: 0.00
+		lineageTag: daf4ee38-18e2-571a-87b3-516d095b3bb8
+		summarizeBy: none
+		sourceColumn: season_avg_mae
+
+		annotation SummarizationSetBy = User
+
+	partition 'Backtest 2026' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "backtest_2026.csv") else File.Contents(DataSource & "backtest_2026.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"season", Int64.Type}, {"week", Int64.Type}, {"player_games", Int64.Type}, {"model_start_sit", type number}, {"season_avg_start_sit", type number}, {"model_mae", type number}, {"season_avg_mae", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

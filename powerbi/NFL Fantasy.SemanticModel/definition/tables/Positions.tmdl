@@ -1,0 +1,42 @@
+table Positions
+	lineageTag: 377cff83-78eb-532c-84d6-8811f65391a7
+
+	column position
+		dataType: string
+		lineageTag: b06b715e-85c0-53be-8f2b-9a00c8945e63
+		summarizeBy: none
+		sourceColumn: position
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = User
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: e8fe6669-49c5-529c-9368-258ce22b29dd
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = User
+
+	column position_name
+		dataType: string
+		lineageTag: da40f5c3-d45e-5b20-a826-7928fbc4a138
+		summarizeBy: none
+		sourceColumn: position_name
+
+		annotation SummarizationSetBy = User
+
+	partition Positions = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "positions.csv") else File.Contents(DataSource & "positions.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"position", type text}, {"sort_order", Int64.Type}, {"position_name", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

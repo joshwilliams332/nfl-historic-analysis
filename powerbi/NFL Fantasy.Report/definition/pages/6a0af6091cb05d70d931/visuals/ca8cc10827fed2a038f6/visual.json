@@ -1,0 +1,100 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "ca8cc10827fed2a038f6",
+  "position": {
+    "x": 300,
+    "y": 96,
+    "z": 6000,
+    "height": 300,
+    "width": 470.0,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Seasons"
+                    }
+                  },
+                  "Property": "season"
+                }
+              },
+              "queryRef": "Seasons.season",
+              "nativeQueryRef": "season",
+              "displayName": "Season",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Positions"
+                    }
+                  },
+                  "Property": "position"
+                }
+              },
+              "queryRef": "Positions.position",
+              "nativeQueryRef": "position",
+              "displayName": "Position"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Top-150 Share"
+                }
+              },
+              "queryRef": "Player Seasons.Top-150 Share",
+              "nativeQueryRef": "Top-150 Share",
+              "displayName": "Share of top-150 points"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Share of top-150 fantasy points by position'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

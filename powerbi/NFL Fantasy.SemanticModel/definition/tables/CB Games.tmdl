@@ -1,0 +1,219 @@
+table 'CB Games'
+	lineageTag: a027e35c-a77a-50e0-bfdb-1b86c2ea1665
+
+	measure 'CB Tgts' =
+			SUM('CB Games'[targets])
+		formatString: #,0
+		lineageTag: 8c97d6a2-dfa8-5036-9a59-b7061d0b98be
+
+	measure 'Completions Allowed' =
+			SUM('CB Games'[completions])
+		formatString: #,0
+		lineageTag: 1ab6e69e-9f84-5198-8866-fd3dade72790
+
+	measure 'Catch % Allowed' =
+			DIVIDE([Completions Allowed], [CB Tgts])
+		formatString: 0.0%
+		lineageTag: 9eccf5dd-dc0a-5551-81e5-1d1b049b0c94
+
+	measure 'Yards Allowed' =
+			SUM('CB Games'[yards])
+		formatString: #,0
+		lineageTag: e964be98-71fe-5a2f-b10a-82484819f2f7
+
+	measure 'Yards per Target Allowed' =
+			DIVIDE([Yards Allowed], [CB Tgts])
+		formatString: 0.0
+		lineageTag: e4bdebe6-3192-50a3-a06a-7c20ee1ced79
+
+	measure 'TDs Allowed' =
+			SUM('CB Games'[tds])
+		formatString: 0
+		lineageTag: bddd538b-2dbe-508a-8fbb-333ee20b548c
+
+	measure INTs =
+			SUM('CB Games'[ints])
+		formatString: 0
+		lineageTag: 87c6a90b-b71e-54b3-a11f-f1d73e550e13
+
+	/// Pro Football Reference passer rating on throws into this corner's coverage, weighted by targets.
+	measure 'Passer Rating Allowed' =
+			DIVIDE(SUMX('CB Games', 'CB Games'[rating] * 'CB Games'[targets]), [CB Tgts])
+		formatString: 0.0
+		lineageTag: 5581831c-c489-500c-924f-cc26ee673bab
+
+	measure 'Min CB Targets Value' =
+			MIN('Min CB Targets'[Value])
+		formatString: 0
+		lineageTag: 25f2ca9c-e840-5250-98a2-45103d28dca2
+
+	measure 'CB Metric Value' =
+			VAR m = SELECTEDVALUE('CB Metric'[Metric], "Yards allowed")
+			VAR v =
+			    SWITCH(
+			        m,
+			        "Yards allowed", [Yards Allowed],
+			        "Yards/target allowed", [Yards per Target Allowed],
+			        "Catch % allowed", [Catch % Allowed] * 100,
+			        "Passer rating allowed", [Passer Rating Allowed],
+			        "Targets", [CB Tgts],
+			        "TDs allowed", [TDs Allowed]
+			    )
+			RETURN
+			    IF([CB Tgts] > 0 && [CB Tgts] >= [Min CB Targets Value], v)
+		formatString: #,0.0
+		lineageTag: fe63ca59-6a95-54b8-9e98-513c5ba1f2c9
+
+	column game_id
+		dataType: string
+		isHidden
+		lineageTag: 50afa431-fb62-57e6-b5f4-379b58e4f4d4
+		summarizeBy: none
+		sourceColumn: game_id
+
+		annotation SummarizationSetBy = User
+
+	column defense
+		dataType: string
+		isHidden
+		lineageTag: c41543da-6e84-55c8-a171-84b779410b64
+		summarizeBy: none
+		sourceColumn: defense
+
+		annotation SummarizationSetBy = User
+
+	column offense
+		dataType: string
+		isHidden
+		lineageTag: 8c7a0128-eab3-514d-b318-30ee31df9afc
+		summarizeBy: none
+		sourceColumn: offense
+
+		annotation SummarizationSetBy = User
+
+	column cb_id
+		dataType: string
+		isHidden
+		lineageTag: 3b054cba-6450-5a6f-868b-177f07967ca7
+		summarizeBy: none
+		sourceColumn: cb_id
+
+		annotation SummarizationSetBy = User
+
+	column cb
+		dataType: string
+		lineageTag: 20472337-0eae-54b4-967b-a86ee6a4ecfb
+		summarizeBy: none
+		sourceColumn: cb
+
+		annotation SummarizationSetBy = User
+
+	column listed_as
+		dataType: string
+		lineageTag: c145b566-bca2-59bc-88a8-6d925a3f52e6
+		summarizeBy: none
+		sourceColumn: listed_as
+
+		annotation SummarizationSetBy = User
+
+	column side
+		dataType: string
+		isHidden
+		lineageTag: 68b16a8d-bda6-5e6f-8828-79b09be5d184
+		summarizeBy: none
+		sourceColumn: side
+
+		annotation SummarizationSetBy = User
+
+	column targets
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 1e1fea57-5bf0-546a-aab3-75e599cd14c5
+		summarizeBy: sum
+		sourceColumn: targets
+
+		annotation SummarizationSetBy = User
+
+	column completions
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: e0851fe6-491d-5e1f-a645-6410b4cad4d9
+		summarizeBy: sum
+		sourceColumn: completions
+
+		annotation SummarizationSetBy = User
+
+	column yards
+		dataType: double
+		formatString: #,0
+		isHidden
+		lineageTag: 15782fef-98f9-506d-99f9-5c1f2f0498c1
+		summarizeBy: sum
+		sourceColumn: yards
+
+		annotation SummarizationSetBy = User
+
+	column tds
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: 3ef3b438-26d1-5f1e-b6f2-b67fa320cc8f
+		summarizeBy: sum
+		sourceColumn: tds
+
+		annotation SummarizationSetBy = User
+
+	column ints
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 5b556d32-c1c8-5a88-818f-871dbcfd501b
+		summarizeBy: sum
+		sourceColumn: ints
+
+		annotation SummarizationSetBy = User
+
+	column rating
+		dataType: double
+		formatString: 0.0
+		isHidden
+		lineageTag: add96443-0b55-5dbb-994d-ab9e818e2809
+		summarizeBy: none
+		sourceColumn: rating
+
+		annotation SummarizationSetBy = User
+
+	column adot
+		dataType: double
+		formatString: 0.0
+		isHidden
+		lineageTag: c5fcd4da-7591-55cb-80b9-e77960fb29aa
+		summarizeBy: none
+		sourceColumn: adot
+
+		annotation SummarizationSetBy = User
+
+	column yac
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: 3aeab65f-1e25-562b-bb25-72a7468fe8b6
+		summarizeBy: sum
+		sourceColumn: yac
+
+		annotation SummarizationSetBy = User
+
+	partition 'CB Games' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "cb_games.csv") else File.Contents(DataSource & "cb_games.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"game_id", type text}, {"defense", type text}, {"offense", type text}, {"cb_id", type text}, {"cb", type text}, {"listed_as", type text}, {"side", type text}, {"targets", Int64.Type}, {"completions", Int64.Type}, {"yards", type number}, {"tds", type number}, {"ints", Int64.Type}, {"rating", type number}, {"adot", type number}, {"yac", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

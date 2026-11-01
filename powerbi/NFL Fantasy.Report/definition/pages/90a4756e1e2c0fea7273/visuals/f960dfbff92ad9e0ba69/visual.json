@@ -1,0 +1,153 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "f960dfbff92ad9e0ba69",
+  "position": {
+    "x": 300,
+    "y": 208,
+    "z": 13000,
+    "height": 500,
+    "width": 470.0,
+    "tabOrder": 13000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "player"
+                }
+              },
+              "queryRef": "Player Seasons.player",
+              "nativeQueryRef": "Player",
+              "displayName": "Player"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "season"
+                }
+              },
+              "queryRef": "Player Seasons.season",
+              "nativeQueryRef": "season",
+              "displayName": "Season"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "age_years"
+                }
+              },
+              "queryRef": "Player Seasons.age_years",
+              "nativeQueryRef": "Age (years)",
+              "displayName": "Age"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "ppg"
+                }
+              },
+              "queryRef": "Player Seasons.ppg",
+              "nativeQueryRef": "PPG",
+              "displayName": "PPG"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Next Season PPG"
+                }
+              },
+              "queryRef": "Player Seasons.Next Season PPG",
+              "nativeQueryRef": "Next Season PPG",
+              "displayName": "Next PPG"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Avg PPG Change"
+                }
+              },
+              "queryRef": "Player Seasons.Avg PPG Change",
+              "nativeQueryRef": "Avg PPG Change",
+              "displayName": "Change"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Player Seasons"
+                  }
+                },
+                "Property": "ppg"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Matching seasons and what came next'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

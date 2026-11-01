@@ -51,3 +51,35 @@ def test_pairwise_accuracy():
                        "pred": [3.0, 2.0, 1.0], "actual": [30.0, 10.0, 20.0]})
     # Pairs: (3 vs 2) right, (3 vs 1) right, (2 vs 1) wrong.
     assert pairwise_accuracy(df, "pred", "actual") == 2 / 3
+
+
+def test_snap_features_exclude_current_week():
+    from fantasy.features import add_snap_features
+    players, _ = _toy()
+    snaps = pd.DataFrame({"player_id": "a1", "season": 2024, "week": [1, 2, 3], "snap_pct": [0.5, 0.7, 0.9]})
+    f = add_snap_features(players, snaps).set_index(["player_id", "week"])
+    assert np.isnan(f.loc[("a1", 1), "snap_last"])
+    assert f.loc[("a1", 3), "snap_last"] == 0.7
+    assert f.loc[("a1", 3), "snap_avg"] == 0.6
+    assert "snap_pct" not in f.columns
+
+
+def test_upcoming_rows_skip_byes_and_absent_players():
+    from fantasy.features import upcoming_rows
+    players, _ = _toy()
+    players = players[~((players.player_id == "a2") & (players.week == 3))]  # a2 missed team A's last game
+    games = pd.DataFrame({"season": 2024, "week": 4, "team": ["A"], "opponent_team": ["C"]})  # team D on bye
+    up = upcoming_rows(players, games, 2024, 4)
+    assert up.player_id.tolist() == ["a1"]
+    assert up.iloc[0].opponent_team == "C"
+
+
+def test_upcoming_rows_skip_teams_that_already_played():
+    from fantasy.features import upcoming_rows
+    players, _ = _toy()
+    week4 = players[players.week == 3].assign(week=4)
+    week4 = week4[week4.team == "A"]  # team A's week-4 game (Thursday) is already in the data
+    players = pd.concat([players, week4], ignore_index=True)
+    games = pd.DataFrame({"season": 2024, "week": 4, "team": ["A", "D"], "opponent_team": ["C", "B"]})
+    up = upcoming_rows(players, games, 2024, 4)
+    assert up.player_id.tolist() == ["d1"]

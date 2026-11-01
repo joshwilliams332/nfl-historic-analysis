@@ -1,0 +1,138 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "5fcfd02606d79f78e519",
+  "position": {
+    "x": 300,
+    "y": 96,
+    "z": 8000,
+    "height": 612,
+    "width": 640,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "key"
+                }
+              },
+              "queryRef": "Player Seasons.key",
+              "nativeQueryRef": "key",
+              "displayName": "Player-season",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Positions"
+                    }
+                  },
+                  "Property": "position"
+                }
+              },
+              "queryRef": "Positions.position",
+              "nativeQueryRef": "position",
+              "displayName": "Position"
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Past Stat Value"
+                }
+              },
+              "queryRef": "Player Seasons.Past Stat Value",
+              "nativeQueryRef": "Past Stat Value",
+              "displayName": "This-season stat"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Next Season PPG"
+                }
+              },
+              "queryRef": "Player Seasons.Next Season PPG",
+              "nativeQueryRef": "Next Season PPG",
+              "displayName": "Next-season PPG"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Point Label"
+                }
+              },
+              "queryRef": "Player Seasons.Point Label",
+              "nativeQueryRef": "Point Label",
+              "displayName": "Player"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'This season (selected stat) vs. next-season PPG'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

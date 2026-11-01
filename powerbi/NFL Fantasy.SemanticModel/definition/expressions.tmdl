@@ -1,0 +1,6 @@
+expression DataSource = "https://raw.githubusercontent.com/joshwilliams332/nfl-historic-analysis/main/powerbi/data/" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 6906789c-4b80-5d33-a688-abc0d17c7cb6
+
+	annotation PBI_ResultType = Text
+
+	annotation PBI_NavigationStepName = Navigation

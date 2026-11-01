@@ -15,6 +15,10 @@ FEATURES = [
     "opps_per_game", "targets_per_game", "carries_per_game", "target_share_avg",
     "tds_per_game", "def_factor", "implied_total", "implied_factor", "spread", "home",
 ]
+# Share of offensive snaps in earlier games (2013+).
+SNAP_FEATURES = ["snap_last", "snap_last3", "snap_avg"]
+# This week's final injury report, published before kickoff (no report = all zeros).
+INJURY_FEATURES = ["questionable", "doubtful", "practice_dnp", "practice_limited"]
 
 
 def _player_history(df: pd.DataFrame) -> pd.DataFrame:
@@ -74,6 +78,39 @@ def build_features(players: pd.DataFrame, games: pd.DataFrame) -> pd.DataFrame:
     lines["implied_factor"] = lines.implied_total / lines.groupby(["season", "week"]).implied_total.transform("mean")
     df = df.merge(lines, on=["season", "week", "team"], how="left")
     return df
+
+
+def add_snap_features(df: pd.DataFrame, snaps: pd.DataFrame) -> pd.DataFrame:
+    """Snap share from earlier games only. This week's own snap share is an outcome, so it's dropped."""
+    out = df.merge(snaps, on=["player_id", "season", "week"], how="left")
+    g = out.groupby(["player_id", "season"], sort=False).snap_pct
+    out["snap_last"] = g.shift(1)
+    out["snap_last3"] = g.transform(lambda s: s.shift(1).rolling(3, min_periods=1).mean())
+    out["snap_avg"] = g.transform(lambda s: s.shift(1).expanding().mean())
+    return out.drop(columns="snap_pct")
+
+
+def add_injury_features(df: pd.DataFrame, injuries: pd.DataFrame) -> pd.DataFrame:
+    """Join the week's own injury report (known before kickoff). Players not on it get zeros."""
+    out = df.merge(injuries, on=["player_id", "season", "week"], how="left")
+    out[INJURY_FEATURES] = out[INJURY_FEATURES].fillna(0).astype(int)
+    return out
+
+
+def upcoming_rows(players: pd.DataFrame, games: pd.DataFrame, season: int, week: int) -> pd.DataFrame:
+    """Placeholder rows for a week not yet played, so ``build_features`` can project it.
+
+    Includes each player who appeared in their team's most recent game this season and whose team plays
+    in ``week`` but hasn't played it yet (a Thursday game already in the data is skipped). Stats are left
+    empty; the shifted features only look at earlier weeks anyway."""
+    played = set(players[(players.season == season) & (players.week == week)].team)
+    cur = players[(players.season == season) & (players.week < week)]
+    last_team_week = cur.groupby("team").week.max()
+    latest = cur.sort_values("week").drop_duplicates("player_id", keep="last")
+    latest = latest[latest.week == latest.team.map(last_team_week)]
+    sched = games[(games.season == season) & (games.week == week) & ~games.team.isin(played)][["team", "opponent_team"]]
+    rows = latest[["player_id", "player_display_name", "position", "team"]].merge(sched, on="team")
+    return rows.assign(season=season, week=week)
 
 
 def model_sample(df: pd.DataFrame, min_games: int = 3, min_avg: float = 5.0) -> pd.DataFrame:

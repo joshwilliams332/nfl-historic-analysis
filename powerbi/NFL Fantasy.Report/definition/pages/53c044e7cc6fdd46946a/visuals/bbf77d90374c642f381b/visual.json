@@ -1,0 +1,213 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "bbf77d90374c642f381b",
+  "position": {
+    "x": 300,
+    "y": 480,
+    "z": 11000,
+    "height": 228,
+    "width": 956,
+    "tabOrder": 11000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "season"
+                }
+              },
+              "queryRef": "Player Seasons.season",
+              "nativeQueryRef": "season",
+              "displayName": "Season"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "team"
+                }
+              },
+              "queryRef": "Player Seasons.team",
+              "nativeQueryRef": "Team",
+              "displayName": "Team"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "age_years"
+                }
+              },
+              "queryRef": "Player Seasons.age_years",
+              "nativeQueryRef": "Age (years)",
+              "displayName": "Age"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "games"
+                }
+              },
+              "queryRef": "Player Seasons.games",
+              "nativeQueryRef": "Games",
+              "displayName": "Games"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "ppg"
+                }
+              },
+              "queryRef": "Player Seasons.ppg",
+              "nativeQueryRef": "PPG",
+              "displayName": "PPG"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "pos_rank"
+                }
+              },
+              "queryRef": "Player Seasons.pos_rank",
+              "nativeQueryRef": "Pos rank",
+              "displayName": "Pos rank"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "touches_pg"
+                }
+              },
+              "queryRef": "Player Seasons.touches_pg",
+              "nativeQueryRef": "Touches/G",
+              "displayName": "Touches/G"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "targets_pg"
+                }
+              },
+              "queryRef": "Player Seasons.targets_pg",
+              "nativeQueryRef": "Targets/G",
+              "displayName": "Targets/G"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "td_pg"
+                }
+              },
+              "queryRef": "Player Seasons.td_pg",
+              "nativeQueryRef": "TDs/G",
+              "displayName": "TDs/G"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "snap_pct"
+                }
+              },
+              "queryRef": "Player Seasons.snap_pct",
+              "nativeQueryRef": "Snap share",
+              "displayName": "Snap share"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Player Seasons"
+                  }
+                },
+                "Property": "season"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Season by season'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

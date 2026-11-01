@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "a2bea754d06f33e5a24b",
+  "position": {
+    "x": 24,
+    "y": 554,
+    "z": 9000,
+    "height": 154,
+    "width": 260,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Estimated: a pass to the offense's left is credited to the defense's listed right corner, middle to the nickel, right to the left corner. Real assignments aren't public, and corners shadow and switch sides: on 2025-26 data the listed sides only weakly track where passes go (r \u2248 0.1). Treat the matchup table as a rough guide.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#898781"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

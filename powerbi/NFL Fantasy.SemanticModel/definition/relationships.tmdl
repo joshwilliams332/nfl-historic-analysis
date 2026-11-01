@@ -1,0 +1,63 @@
+relationship 2dfb5628-b169-5336-94ad-f6bfb962a96a
+	fromColumn: 'Player Seasons'.season
+	toColumn: Seasons.season
+
+relationship a89cdfbb-2861-5cb3-9e48-a4d3f0a7b954
+	fromColumn: 'Player Seasons'.position
+	toColumn: Positions.position
+
+relationship 34b67aec-ffc6-52de-8439-6827abadf2a3
+	fromColumn: 'Weekly Projections'.position
+	toColumn: Positions.position
+
+relationship dd2c9dda-c552-5057-b99a-70abcc17c20d
+	fromColumn: 'WR Targets'.game_id
+	toColumn: 'Matchup Games'.game_id
+
+relationship c18b8d3c-ed83-58b4-afd1-ce1bd5762c05
+	fromColumn: 'WR Targets'.offense
+	toColumn: 'Offense Team'.team
+
+relationship 7c5d832e-536e-54fd-b80f-4fe2c2d4338b
+	fromColumn: 'WR Targets'.defense
+	toColumn: 'Defense Team'.team
+
+relationship b1834581-2108-5eed-99d8-ed2b68a65b0c
+	fromColumn: 'WR Games'.game_id
+	toColumn: 'Matchup Games'.game_id
+
+relationship 3c3ba9b3-e7e0-5cc2-b531-9ace58c18330
+	fromColumn: 'WR Games'.team
+	toColumn: 'Offense Team'.team
+
+relationship 7cc5b812-0937-5fbe-81d0-14f67b22a4b0
+	fromColumn: 'WR Games'.opponent
+	toColumn: 'Defense Team'.team
+
+relationship 1a616144-dfbc-502e-886f-01f8a33d2105
+	fromColumn: 'CB Games'.game_id
+	toColumn: 'Matchup Games'.game_id
+
+relationship 1d375395-a333-51a0-b8a8-b1c7d3cebd2a
+	fromColumn: 'CB Games'.offense
+	toColumn: 'Offense Team'.team
+
+relationship 72bc5709-e0ca-5dfe-98f6-8f7e76703137
+	fromColumn: 'CB Games'.defense
+	toColumn: 'Defense Team'.team
+
+relationship 119a642f-ca0b-506b-b6ff-bf6e5a1db073
+	fromColumn: 'WR Targets'.side
+	toColumn: Sides.side
+
+relationship 9ba9375a-4d6a-5c7c-a174-c4110c08f366
+	fromColumn: 'CB Games'.side
+	toColumn: Sides.side
+
+relationship 19f62ae0-73b6-5b44-8f38-38c797730b97
+	fromColumn: 'WR Targets'.receiver_id
+	toColumn: Receivers.receiver_id
+
+relationship 5850030c-8477-5f49-91d7-95df34354689
+	fromColumn: 'WR Games'.receiver_id
+	toColumn: Receivers.receiver_id

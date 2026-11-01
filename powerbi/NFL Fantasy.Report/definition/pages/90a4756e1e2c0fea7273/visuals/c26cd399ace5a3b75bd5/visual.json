@@ -1,0 +1,153 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "c26cd399ace5a3b75bd5",
+  "position": {
+    "x": 786.0,
+    "y": 208,
+    "z": 14000,
+    "height": 500,
+    "width": 470.0,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "player"
+                }
+              },
+              "queryRef": "Player Seasons.player",
+              "nativeQueryRef": "Player",
+              "displayName": "Player"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "team"
+                }
+              },
+              "queryRef": "Player Seasons.team",
+              "nativeQueryRef": "Team",
+              "displayName": "Team"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "age_years"
+                }
+              },
+              "queryRef": "Player Seasons.age_years",
+              "nativeQueryRef": "Age (years)",
+              "displayName": "Age"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "ppg"
+                }
+              },
+              "queryRef": "Player Seasons.ppg",
+              "nativeQueryRef": "PPG",
+              "displayName": "2025 PPG"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "2026 Projection"
+                }
+              },
+              "queryRef": "Player Seasons.2026 Projection",
+              "nativeQueryRef": "2026 Projection",
+              "displayName": "2026 proj."
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "2026 So Far"
+                }
+              },
+              "queryRef": "Player Seasons.2026 So Far",
+              "nativeQueryRef": "2026 So Far",
+              "displayName": "2026 so far"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Player Seasons"
+                  }
+                },
+                "Property": "2026 Projection"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'2025 players with this profile \u2192 2026'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

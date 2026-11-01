@@ -1,0 +1,39 @@
+table 'CB Metric'
+	lineageTag: a444b1b4-7ca6-57ee-a856-1c26238fe1d8
+
+	column Metric
+		dataType: string
+		lineageTag: ee01c484-a3e3-545c-8a41-0ada280a252f
+		summarizeBy: none
+		sourceColumn: [Metric]
+		sortByColumn: SortOrder
+
+		annotation SummarizationSetBy = User
+
+	column SortOrder
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 45d97dbd-f26f-593a-98c8-5dc03329ba2c
+		summarizeBy: none
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = User
+
+	partition 'CB Metric' = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Metric", STRING,
+				    "SortOrder", INTEGER,
+				    {
+				        {"Yards allowed", 1},
+				        {"Yards/target allowed", 2},
+				        {"Catch % allowed", 3},
+				        {"Passer rating allowed", 4},
+				        {"Targets", 5},
+				        {"TDs allowed", 6}
+				    }
+				)
+
+	annotation PBI_Id = 317e5cec2e555c025870

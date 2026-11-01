@@ -1,0 +1,49 @@
+table 'Past Stat'
+	lineageTag: 57296bac-8117-5f71-84aa-9fc0ffac4b65
+
+	column Stat
+		dataType: string
+		lineageTag: 9c006099-8b9a-5ff0-bfc2-cfd2350b1933
+		summarizeBy: none
+		sourceColumn: [Stat]
+		sortByColumn: SortOrder
+
+		annotation SummarizationSetBy = User
+
+	column SortOrder
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: b9bf0e5a-8e38-583f-992e-8f2e6b9faf3a
+		summarizeBy: none
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = User
+
+	column Meaning
+		dataType: string
+		lineageTag: 4053cf09-0c81-5e69-b58d-2cfd4f0351d2
+		summarizeBy: none
+		sourceColumn: [Meaning]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Past Stat' = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Stat", STRING,
+				    "SortOrder", INTEGER,
+				    "Meaning", STRING,
+				    {
+				        {"PPG", 1, "Fantasy points per game"},
+				        {"Touches/G", 2, "Carries + receptions per game"},
+				        {"Targets/G", 3, "Targets per game (none recorded 2003-2008)"},
+				        {"TDs/G", 4, "Rushing + receiving touchdowns per game"},
+				        {"TD rate", 5, "Touchdowns per touch"},
+				        {"Snap share", 6, "Share of offensive snaps (2013+)"},
+				        {"Age", 7, "Age on Sept. 1"}
+				    }
+				)
+
+	annotation PBI_Id = b961fb1e85dfc5eba025

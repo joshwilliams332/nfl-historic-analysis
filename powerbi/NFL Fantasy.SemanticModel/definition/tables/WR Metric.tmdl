@@ -1,0 +1,39 @@
+table 'WR Metric'
+	lineageTag: a4da081b-7446-5f76-90e8-d8e6b3bab66d
+
+	column Metric
+		dataType: string
+		lineageTag: eb325fa9-8327-5bc4-ba5d-ba0629d33491
+		summarizeBy: none
+		sourceColumn: [Metric]
+		sortByColumn: SortOrder
+
+		annotation SummarizationSetBy = User
+
+	column SortOrder
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 5adfabd7-5cde-56dd-8d06-9e7bb67968b4
+		summarizeBy: none
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = User
+
+	partition 'WR Metric' = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "Metric", STRING,
+				    "SortOrder", INTEGER,
+				    {
+				        {"Success rate %", 1},
+				        {"Receiving yards", 2},
+				        {"Yards per target", 3},
+				        {"Catch rate %", 4},
+				        {"Targets", 5},
+				        {"Separation (yds)", 6}
+				    }
+				)
+
+	annotation PBI_Id = 371663a13be88faaaaa8

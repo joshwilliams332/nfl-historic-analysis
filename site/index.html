@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fantasy Football Lab</title>
+  <meta name="description" content="What predicts fantasy football points? Interactive charts from 27 NFL seasons (nflverse).">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232a78d6'/%3E%3Cpath d='M7 23l6-7 5 4 7-9' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <h1>Fantasy Football Lab</h1>
+      <p class="tagline">What actually predicts fantasy points? 27 NFL seasons, tap and slide to explore.</p>
+    </div>
+  </header>
+  <nav class="tabs" aria-label="Views">
+    <div class="wrap tabs-inner" id="tabs"></div>
+  </nav>
+  <main class="wrap" id="view" aria-live="polite"></main>
+  <footer class="wrap foot">
+    Data: <a href="https://github.com/nflverse/nflverse-data">nflverse</a> (play-by-play, weekly stats, depth charts),
+    Next Gen Stats, Pro Football Reference coverage stats. Full PPR scoring.
+    Code and analysis: <a href="https://github.com/joshwilliams332/nfl-historic-analysis">nfl-historic-analysis</a>.
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

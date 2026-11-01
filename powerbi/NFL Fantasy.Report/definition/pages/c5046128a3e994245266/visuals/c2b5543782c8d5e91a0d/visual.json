@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "c2b5543782c8d5e91a0d",
+  "position": {
+    "x": 24,
+    "y": 554,
+    "z": 9000,
+    "height": 154,
+    "width": 260,
+    "tabOrder": 9000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Receiver stats come from every targeted pass (play-by-play); separation is Next Gen Stats. Corner stats are Pro Football Reference coverage numbers: lower yards, catch % and rating allowed = better coverage. Separation allowed by corners isn't public.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#898781"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

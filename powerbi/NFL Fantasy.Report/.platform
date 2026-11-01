@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "NFL Fantasy"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "8b2e0814-e972-5349-85bd-a230f962131d"
+  }
+}

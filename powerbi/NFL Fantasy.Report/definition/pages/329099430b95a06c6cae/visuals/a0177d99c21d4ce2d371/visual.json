@@ -1,0 +1,98 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "a0177d99c21d4ce2d371",
+  "position": {
+    "x": 300,
+    "y": 204,
+    "z": 14000,
+    "height": 248,
+    "width": 304,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Sides"
+                    }
+                  },
+                  "Property": "side"
+                }
+              },
+              "queryRef": "Sides.side",
+              "nativeQueryRef": "side",
+              "displayName": "Side",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "WR Targets"
+                    }
+                  },
+                  "Property": "WR Tgts"
+                }
+              },
+              "queryRef": "WR Targets.WR Tgts",
+              "nativeQueryRef": "WR Tgts",
+              "displayName": "Targets"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Sides"
+                  }
+                },
+                "Property": "side"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Targets by side of the field'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

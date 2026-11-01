@@ -1,0 +1,42 @@
+table Seasons
+	lineageTag: acd83197-6b37-5721-ab18-965c9b828251
+
+	column season
+		dataType: int64
+		formatString: 0
+		lineageTag: 2427c853-4aa4-5f85-a728-ab9efa71c4ff
+		summarizeBy: none
+		sourceColumn: season
+
+		annotation SummarizationSetBy = User
+
+	column era
+		dataType: string
+		lineageTag: a83c8c17-2d64-51c4-9335-4f3ada4b4a54
+		summarizeBy: none
+		sourceColumn: era
+
+		annotation SummarizationSetBy = User
+
+	column is_complete
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 0173fa84-1eeb-5f38-811c-9e70948d81aa
+		summarizeBy: none
+		sourceColumn: is_complete
+
+		annotation SummarizationSetBy = User
+
+	partition Seasons = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "seasons.csv") else File.Contents(DataSource & "seasons.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"season", Int64.Type}, {"era", type text}, {"is_complete", Int64.Type}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

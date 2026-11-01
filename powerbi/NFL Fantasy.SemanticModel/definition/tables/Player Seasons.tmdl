@@ -1,0 +1,553 @@
+table 'Player Seasons'
+	lineageTag: 842db6ef-7b41-5cc8-840c-6680db1a85bc
+
+	measure 'Player-Seasons' =
+			COUNTROWS('Player Seasons')
+		formatString: #,0
+		lineageTag: cb815e57-4ceb-569f-8e4e-effe91447fa4
+
+	measure 'Season PPG' =
+			DIVIDE(SUM('Player Seasons'[ppr_points]), SUM('Player Seasons'[games]))
+		formatString: 0.0
+		lineageTag: 6705b129-5edb-5285-8cda-94a446db0dbc
+
+	measure 'Seasons With Next' =
+			CALCULATE(COUNTROWS('Player Seasons'), 'Player Seasons'[has_next] = 1)
+		formatString: #,0
+		lineageTag: e65ed80c-5045-589e-b500-68b193b5b16f
+
+	measure 'Next Season PPG' =
+			CALCULATE(AVERAGE('Player Seasons'[next_ppg]), 'Player Seasons'[has_next] = 1)
+		formatString: 0.0
+		lineageTag: a1a4fb2d-ca84-57dc-ba81-ccdd8504f4e6
+
+	measure 'Avg PPG Change' =
+			CALCULATE(AVERAGE('Player Seasons'[ppg_change]), 'Player Seasons'[has_next] = 1)
+		formatString: +0.0;-0.0;0.0
+		lineageTag: 5476bad7-8878-5c65-8f75-463143dd7806
+
+	measure '% Improved Next Season' =
+			CALCULATE(AVERAGE('Player Seasons'[improved]), 'Player Seasons'[has_next] = 1)
+		formatString: 0%
+		lineageTag: aab10d3e-9e3b-56b0-b3a1-619a731cd79c
+
+	measure '% Top 12 Next Season' =
+			CALCULATE(AVERAGE('Player Seasons'[next_top12]), 'Player Seasons'[has_next] = 1)
+		formatString: 0%
+		lineageTag: 0c7c58e2-a87b-5cb8-b87a-bc45ae801659
+
+	measure '% Top 24 Next Season' =
+			CALCULATE(AVERAGE('Player Seasons'[next_top24]), 'Player Seasons'[has_next] = 1)
+		formatString: 0%
+		lineageTag: 9d49bd37-230f-56cc-b1cb-5d1a67017be2
+
+	measure 'Selected Stat' =
+			SELECTEDVALUE('Past Stat'[Stat], "PPG")
+		lineageTag: bea6507d-aab1-5f79-acb4-c09f9cf21fd6
+
+	measure 'Past Stat Value' =
+			VAR s = [Selected Stat]
+			RETURN
+			    SWITCH(
+			        s,
+			        "PPG", AVERAGE('Player Seasons'[ppg]),
+			        "Touches/G", AVERAGE('Player Seasons'[touches_pg]),
+			        "Targets/G", AVERAGE('Player Seasons'[targets_pg]),
+			        "TDs/G", AVERAGE('Player Seasons'[td_pg]),
+			        "TD rate", AVERAGE('Player Seasons'[td_rate]),
+			        "Snap share", AVERAGE('Player Seasons'[snap_pct]),
+			        "Age", AVERAGE('Player Seasons'[age])
+			    )
+		formatString: 0.00
+		lineageTag: 21a2c439-bf63-5d08-bd4a-ab4fc927e9eb
+
+	/// Correlation between the selected stat this season and PPG the next season, over the player-seasons in the current filters.
+	measure 'Past Future r' =
+			VAR s = [Selected Stat]
+			VAR pts =
+			    FILTER(
+			        SELECTCOLUMNS(
+			            FILTER('Player Seasons', 'Player Seasons'[has_next] = 1),
+			            "x", SWITCH(
+			                s,
+			                "PPG", 'Player Seasons'[ppg],
+			                "Touches/G", 'Player Seasons'[touches_pg],
+			                "Targets/G", 'Player Seasons'[targets_pg],
+			                "TDs/G", 'Player Seasons'[td_pg],
+			                "TD rate", 'Player Seasons'[td_rate],
+			                "Snap share", 'Player Seasons'[snap_pct],
+			                "Age", 'Player Seasons'[age]
+			            ),
+			            "y", 'Player Seasons'[next_ppg]
+			        ),
+			        NOT ISBLANK([x])
+			    )
+			VAR n = COUNTROWS(pts)
+			VAR mx = AVERAGEX(pts, [x])
+			VAR my = AVERAGEX(pts, [y])
+			VAR sxy = SUMX(pts, ([x] - mx) * ([y] - my))
+			VAR sxx = SUMX(pts, ([x] - mx) ^ 2)
+			VAR syy = SUMX(pts, ([y] - my) ^ 2)
+			RETURN
+			    IF(n >= 10, DIVIDE(sxy, SQRT(sxx * syy)))
+		formatString: 0.00
+		lineageTag: 0b71a4f6-5481-5f42-a0cd-67f97e8b4ffd
+
+	measure 'Link Strength' =
+			VAR r = [Past Future r]
+			VAR a = ABS(r)
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(r), "Not enough seasons",
+			        a >= 0.6, "Strong link",
+			        a >= 0.4, "Moderate link",
+			        a >= 0.2, "Weak link",
+			        "Almost no link"
+			    )
+		lineageTag: d9ed6fbb-8d79-51f1-bd1c-1b952ff0bb46
+
+	/// r squared: share of the differences in next-season PPG that the selected stat lines up with.
+	measure 'Share Explained' =
+			VAR r = [Past Future r]
+			RETURN
+			    IF(NOT ISBLANK(r), r * r)
+		formatString: 0%
+		lineageTag: bedf6b19-59de-5183-bbaf-4516164b9946
+
+	measure 'Point Label' =
+			SELECTEDVALUE('Player Seasons'[player]) & " " & SELECTEDVALUE('Player Seasons'[season])
+		lineageTag: d1ea6d0b-0b16-5bae-bdb5-c6eb88c29a75
+
+	/// Share of the season's top-150 PPR scorers' points that came from this position.
+	measure 'Top-150 Share' =
+			DIVIDE(
+			    CALCULATE(SUM('Player Seasons'[ppr_points]), 'Player Seasons'[top150] = 1),
+			    CALCULATE(SUM('Player Seasons'[ppr_points]), 'Player Seasons'[top150] = 1, REMOVEFILTERS('Positions'))
+			)
+		formatString: 0%
+		lineageTag: cce5a8df-f781-5127-88d6-d46235790b92
+
+	measure '300-Carry RBs' =
+			CALCULATE(
+			    COUNTROWS('Player Seasons'),
+			    'Player Seasons'[carries] >= 300,
+			    'Player Seasons'[position] = "RB",
+			    REMOVEFILTERS('Positions')
+			) + 0
+		formatString: 0
+		lineageTag: d39ee955-991f-5652-98d0-9699a5a63ddb
+
+	/// Average change in PPG from this season to the next, for players with 8+ games in both (needs 20+ players).
+	measure 'Aging Step' =
+			VAR pairs =
+			    CALCULATETABLE(
+			        'Player Seasons',
+			        'Player Seasons'[has_next] = 1,
+			        'Player Seasons'[games] >= 8,
+			        'Player Seasons'[next_games] >= 8
+			    )
+			RETURN
+			    IF(COUNTROWS(pairs) >= 20, AVERAGEX(pairs, 'Player Seasons'[ppg_change]))
+		formatString: +0.0;-0.0;0.0
+		lineageTag: 653226b7-f628-516f-8dbe-9a9db36ba74b
+
+	measure 'Career PPG' =
+			CALCULATE([Season PPG], REMOVEFILTERS('Seasons'), 'Player Seasons'[is_complete] = 1)
+		formatString: 0.0
+		lineageTag: de55a892-536a-5aad-a6c0-c8f36d9d46d6
+
+	measure 'Best Season PPG' =
+			CALCULATE(MAX('Player Seasons'[ppg]), REMOVEFILTERS('Seasons'), 'Player Seasons'[games] >= 6)
+		formatString: 0.0
+		lineageTag: 7e0231b4-df78-56b0-aacf-f4f388fef9b3
+
+	measure 'Seasons Played' =
+			CALCULATE(DISTINCTCOUNT('Player Seasons'[season]), REMOVEFILTERS('Seasons'))
+		formatString: 0
+		lineageTag: 6f46b3a2-6246-5d1d-a7b6-4accde2e0177
+
+	measure 'Top-24 Average at Position' =
+			VAR pos = CALCULATE(SELECTEDVALUE('Player Seasons'[position]), REMOVEFILTERS('Seasons'))
+			RETURN
+			    IF(
+			        NOT ISBLANK(pos) && NOT ISBLANK([Season PPG]),
+			        CALCULATE([Season PPG], REMOVEFILTERS('Player Seasons'), 'Player Seasons'[position] = pos, 'Player Seasons'[pos_rank] <= 24)
+			    )
+		formatString: 0.0
+		lineageTag: 82aed562-151c-5bb0-b0f5-a5a41381a0c8
+
+	measure '2026 Projection' =
+			AVERAGE('Player Seasons'[proj_next_ppg])
+		formatString: 0.0
+		lineageTag: b9ad13de-fccd-5af6-836f-5a730fd3182a
+
+	measure '2026 So Far' =
+			AVERAGE('Player Seasons'[current_ppg])
+		formatString: 0.0
+		lineageTag: 4fe56432-2dd5-57be-a185-1cc5228f83ec
+
+	measure '2026 Games' =
+			MAX('Player Seasons'[current_games])
+		formatString: 0
+		lineageTag: 901191d9-b5c8-591f-8aba-b584c29c1b39
+
+	measure '2026 Projected Change' =
+			[2026 Projection] - AVERAGE('Player Seasons'[ppg])
+		formatString: +0.0;-0.0;0.0
+		lineageTag: 490d8aa5-fb5d-5bfa-adf4-7e046a565384
+
+	column key
+		dataType: string
+		isHidden
+		lineageTag: b8418003-85e4-56f1-b54c-35bdbed0d9c4
+		summarizeBy: none
+		sourceColumn: key
+
+		annotation SummarizationSetBy = User
+
+	column player_id
+		dataType: string
+		isHidden
+		lineageTag: da3d0b3c-bc3d-529b-84d8-6bf8722265c9
+		summarizeBy: none
+		sourceColumn: player_id
+
+		annotation SummarizationSetBy = User
+
+	column player
+		dataType: string
+		lineageTag: 8dda4c27-3027-5563-be2b-1ac618200a88
+		summarizeBy: none
+		sourceColumn: player
+
+		annotation SummarizationSetBy = User
+
+	column player_label
+		dataType: string
+		lineageTag: ea78b742-dc9c-5b35-8ee7-b8be6efc0e24
+		summarizeBy: none
+		sourceColumn: player_label
+
+		annotation SummarizationSetBy = User
+
+	column position
+		dataType: string
+		isHidden
+		lineageTag: c73cce9f-1fca-5919-9fd3-a50d6974de74
+		summarizeBy: none
+		sourceColumn: position
+
+		annotation SummarizationSetBy = User
+
+	column season
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: bc7df2a8-f0ae-5d5b-b96b-fa88604afece
+		summarizeBy: none
+		sourceColumn: season
+
+		annotation SummarizationSetBy = User
+
+	column team
+		dataType: string
+		lineageTag: cd7f397e-46ae-5403-878c-c55fbd03743c
+		summarizeBy: none
+		sourceColumn: team
+
+		annotation SummarizationSetBy = User
+
+	column age
+		dataType: double
+		formatString: 0.0
+		lineageTag: 8f09090b-a72d-509e-b104-a232ef259e21
+		summarizeBy: none
+		sourceColumn: age
+
+		annotation SummarizationSetBy = User
+
+	column age_years
+		dataType: int64
+		formatString: 0
+		lineageTag: 0c3c3351-b266-5d1a-b8be-0841c51400bb
+		summarizeBy: none
+		sourceColumn: age_years
+
+		annotation SummarizationSetBy = User
+
+	column games
+		dataType: int64
+		formatString: 0
+		lineageTag: 7efdbd7a-5790-58d9-9413-e5d256ac74bf
+		summarizeBy: none
+		sourceColumn: games
+
+		annotation SummarizationSetBy = User
+
+	column ppr_points
+		dataType: double
+		formatString: #,0.0
+		lineageTag: 46280770-8d61-5bd2-9c70-ea2b4a9b679b
+		summarizeBy: sum
+		sourceColumn: ppr_points
+
+		annotation SummarizationSetBy = User
+
+	column ppg
+		dataType: double
+		formatString: 0.0
+		lineageTag: e5f0a462-9f0e-5766-ad2f-f0a2cfe94628
+		summarizeBy: none
+		sourceColumn: ppg
+
+		annotation SummarizationSetBy = User
+
+	column targets_pg
+		dataType: double
+		formatString: 0.0
+		lineageTag: 0e5d8b80-557d-5b4f-9840-403f020a5ca6
+		summarizeBy: none
+		sourceColumn: targets_pg
+
+		annotation SummarizationSetBy = User
+
+	column carries_pg
+		dataType: double
+		formatString: 0.0
+		lineageTag: 412a30c3-7a3d-5c41-9bcc-eb83fb39599a
+		summarizeBy: none
+		sourceColumn: carries_pg
+
+		annotation SummarizationSetBy = User
+
+	column receptions_pg
+		dataType: double
+		formatString: 0.0
+		lineageTag: 8597d6dd-13b7-5367-8dba-b78f3189b09c
+		summarizeBy: none
+		sourceColumn: receptions_pg
+
+		annotation SummarizationSetBy = User
+
+	column touches_pg
+		dataType: double
+		formatString: 0.0
+		lineageTag: 5ca46414-e6a3-5f51-b1db-d052fcfc826a
+		summarizeBy: none
+		sourceColumn: touches_pg
+
+		annotation SummarizationSetBy = User
+
+	column tds
+		dataType: int64
+		formatString: 0
+		lineageTag: a62d4b2c-d36d-5566-9dad-10c2405c1c66
+		summarizeBy: sum
+		sourceColumn: tds
+
+		annotation SummarizationSetBy = User
+
+	column td_pg
+		dataType: double
+		formatString: 0.00
+		lineageTag: 146f2416-6261-54f9-8fab-4297fb0f2dfe
+		summarizeBy: none
+		sourceColumn: td_pg
+
+		annotation SummarizationSetBy = User
+
+	column td_rate
+		dataType: double
+		formatString: 0.0%
+		lineageTag: f667dec0-5047-5e5e-83b6-7a8d996af1b6
+		summarizeBy: none
+		sourceColumn: td_rate
+
+		annotation SummarizationSetBy = User
+
+	column attempts_pg
+		dataType: double
+		formatString: 0.0
+		lineageTag: 716af025-dc01-5751-b5de-f2e0dc1ad96e
+		summarizeBy: none
+		sourceColumn: attempts_pg
+
+		annotation SummarizationSetBy = User
+
+	column target_share
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 60d6bcaf-65e9-5180-9801-8bc9a9f6b526
+		summarizeBy: none
+		sourceColumn: target_share
+
+		annotation SummarizationSetBy = User
+
+	column snap_pct
+		dataType: double
+		formatString: 0%
+		lineageTag: 4074bcb3-5dad-5282-8dc6-d2fc5b3498a9
+		summarizeBy: none
+		sourceColumn: snap_pct
+
+		annotation SummarizationSetBy = User
+
+	column carries
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: 592bcab2-97d4-584b-8996-29ead4bf871d
+		summarizeBy: none
+		sourceColumn: carries
+
+		annotation SummarizationSetBy = User
+
+	column pos_rank
+		dataType: int64
+		formatString: 0
+		lineageTag: 551d09ff-ed46-5e12-acce-dda13ab377c9
+		summarizeBy: none
+		sourceColumn: pos_rank
+
+		annotation SummarizationSetBy = User
+
+	column top150
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 7d6da810-cd34-5ac9-9bb7-be327567eb29
+		summarizeBy: none
+		sourceColumn: top150
+
+		annotation SummarizationSetBy = User
+
+	column is_complete
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: fb2dcbd9-1657-57ea-8ba5-3bfd7a10fd70
+		summarizeBy: none
+		sourceColumn: is_complete
+
+		annotation SummarizationSetBy = User
+
+	column has_next
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 822f782f-1657-5635-adaf-8636b93f9783
+		summarizeBy: none
+		sourceColumn: has_next
+
+		annotation SummarizationSetBy = User
+
+	column next_ppg
+		dataType: double
+		formatString: 0.0
+		lineageTag: b6aabe10-86e7-51d1-b18a-d7a49bb41e64
+		summarizeBy: none
+		sourceColumn: next_ppg
+
+		annotation SummarizationSetBy = User
+
+	column next_games
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: 2039ef77-bbd1-505b-b06d-df9a6cafadcc
+		summarizeBy: none
+		sourceColumn: next_games
+
+		annotation SummarizationSetBy = User
+
+	column next_pos_rank
+		dataType: double
+		formatString: 0
+		lineageTag: dc7c7e93-4f22-5d4b-afb4-0278a59a351f
+		summarizeBy: none
+		sourceColumn: next_pos_rank
+
+		annotation SummarizationSetBy = User
+
+	column ppg_change
+		dataType: double
+		formatString: +0.0;-0.0;0.0
+		lineageTag: 56365b54-9bb5-54d4-bb47-4873f48e2bbe
+		summarizeBy: none
+		sourceColumn: ppg_change
+
+		annotation SummarizationSetBy = User
+
+	column improved
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: 604349eb-a60c-5c85-8fc3-1f18e5eb0b33
+		summarizeBy: none
+		sourceColumn: improved
+
+		annotation SummarizationSetBy = User
+
+	column next_top12
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: fccf0c6f-000b-54ce-be23-4870d1233892
+		summarizeBy: none
+		sourceColumn: next_top12
+
+		annotation SummarizationSetBy = User
+
+	column next_top24
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: 53291b2e-e1bd-5a84-a5a4-4309b102fece
+		summarizeBy: none
+		sourceColumn: next_top24
+
+		annotation SummarizationSetBy = User
+
+	column proj_next_ppg
+		dataType: double
+		formatString: 0.0
+		isHidden
+		lineageTag: 1e261ace-5833-592a-84b2-c50f4a9bd075
+		summarizeBy: none
+		sourceColumn: proj_next_ppg
+
+		annotation SummarizationSetBy = User
+
+	column current_ppg
+		dataType: double
+		formatString: 0.0
+		isHidden
+		lineageTag: 1adb531d-7b57-5f77-8490-985b6b40ea27
+		summarizeBy: none
+		sourceColumn: current_ppg
+
+		annotation SummarizationSetBy = User
+
+	column current_games
+		dataType: double
+		formatString: 0
+		isHidden
+		lineageTag: fa1232e9-f0f2-513b-99be-8c7fd7111b70
+		summarizeBy: none
+		sourceColumn: current_games
+
+		annotation SummarizationSetBy = User
+
+	partition 'Player Seasons' = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "player_seasons.csv") else File.Contents(DataSource & "player_seasons.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"key", type text}, {"player_id", type text}, {"player", type text}, {"player_label", type text}, {"position", type text}, {"season", Int64.Type}, {"team", type text}, {"age", type number}, {"age_years", Int64.Type}, {"games", Int64.Type}, {"ppr_points", type number}, {"ppg", type number}, {"targets_pg", type number}, {"carries_pg", type number}, {"receptions_pg", type number}, {"touches_pg", type number}, {"tds", Int64.Type}, {"td_pg", type number}, {"td_rate", type number}, {"attempts_pg", type number}, {"target_share", type number}, {"snap_pct", type number}, {"carries", type number}, {"pos_rank", Int64.Type}, {"top150", Int64.Type}, {"is_complete", Int64.Type}, {"has_next", Int64.Type}, {"next_ppg", type number}, {"next_games", type number}, {"next_pos_rank", type number}, {"ppg_change", type number}, {"improved", type number}, {"next_top12", type number}, {"next_top24", type number}, {"proj_next_ppg", type number}, {"current_ppg", type number}, {"current_games", type number}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

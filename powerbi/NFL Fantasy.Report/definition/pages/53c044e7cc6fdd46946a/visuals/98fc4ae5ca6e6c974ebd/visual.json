@@ -1,0 +1,96 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "98fc4ae5ca6e6c974ebd",
+  "position": {
+    "x": 300,
+    "y": 208,
+    "z": 10000,
+    "height": 260,
+    "width": 956,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Seasons"
+                    }
+                  },
+                  "Property": "season"
+                }
+              },
+              "queryRef": "Seasons.season",
+              "nativeQueryRef": "season",
+              "displayName": "Season",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Season PPG"
+                }
+              },
+              "queryRef": "Player Seasons.Season PPG",
+              "nativeQueryRef": "Season PPG",
+              "displayName": "PPG"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Player Seasons"
+                    }
+                  },
+                  "Property": "Top-24 Average at Position"
+                }
+              },
+              "queryRef": "Player Seasons.Top-24 Average at Position",
+              "nativeQueryRef": "Top-24 Average at Position",
+              "displayName": "Top-24 average at position"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'PPG by season vs. the top-24 average at the position'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

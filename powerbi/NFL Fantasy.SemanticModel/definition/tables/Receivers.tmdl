@@ -1,0 +1,41 @@
+table Receivers
+	lineageTag: c09b3127-89e0-5214-8824-28d75c80b56f
+
+	column receiver_id
+		dataType: string
+		isHidden
+		lineageTag: d4b74913-5ff9-5842-91b2-80457c023ca6
+		summarizeBy: none
+		sourceColumn: receiver_id
+
+		annotation SummarizationSetBy = User
+
+	column receiver
+		dataType: string
+		isHidden
+		lineageTag: a4f0db67-9976-501b-8ca8-e288598f1f92
+		summarizeBy: none
+		sourceColumn: receiver
+
+		annotation SummarizationSetBy = User
+
+	column receiver_label
+		dataType: string
+		lineageTag: 3a06278d-15c1-55b1-ab89-d71d9882e3e6
+		summarizeBy: none
+		sourceColumn: receiver_label
+
+		annotation SummarizationSetBy = User
+
+	partition Receivers = m
+		mode: import
+		source =
+				let
+				    Raw = if Text.StartsWith(DataSource, "http") then Web.Contents(DataSource & "receivers.csv") else File.Contents(DataSource & "receivers.csv"),
+				    Source = Csv.Document(Raw, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Typed = Table.TransformColumnTypes(Promoted, {{"receiver_id", type text}, {"receiver", type text}, {"receiver_label", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table
